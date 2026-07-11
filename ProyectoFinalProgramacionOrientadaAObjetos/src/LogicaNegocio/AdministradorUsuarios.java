@@ -41,7 +41,7 @@ public class AdministradorUsuarios {
     }
     public static boolean existeNombreUsuario(String nombreUsuario){
         for(Usuario usuario: usuariosDeSistema){
-            if(usuario.getCuentaUsuario().getNombreUsuario().equalsIgnoreCase(nombreUsuario.trim())){
+            if(usuario.getNombreUsuario().equalsIgnoreCase(nombreUsuario.trim())){
                 return true;
             }
         }
@@ -49,7 +49,7 @@ public class AdministradorUsuarios {
     }
     public static Usuario autenticarUsuario(String nombreUsuario, String contrasena){
         for(Usuario usuario :usuariosDeSistema){
-            if(usuario.getCuentaUsuario().getNombreUsuario().equalsIgnoreCase(nombreUsuario) && usuario.getCuentaUsuario().getContrasena().equalsIgnoreCase(contrasena)){
+            if(usuario.getNombreUsuario().equalsIgnoreCase(nombreUsuario) && usuario.getContrasena().equalsIgnoreCase(contrasena)){
                 SesionUsuario.setUsuarioActivo(usuario);
                 return usuario;
             }
@@ -58,7 +58,7 @@ public class AdministradorUsuarios {
     }
     public static Administador autenticarUsuarioAdmin(String nombreUsuario, String contrasena){
         for(Administador administador :administradoresDeSistema){
-            if(administador.getCuenta().getNombreUsuario().equalsIgnoreCase(nombreUsuario) && administador.getCuenta().getContrasena().equalsIgnoreCase(contrasena)){
+            if(administador.getNombreUsuario().equalsIgnoreCase(nombreUsuario) && administador.getContrasena().equalsIgnoreCase(contrasena)){
                 return administador;
             }
         }
@@ -184,35 +184,23 @@ public class AdministradorUsuarios {
             System.out.print(
                     "Correo electrónico: ");
 
-            correo =
-                    reader.readLine().trim();
+            correo = reader.readLine().trim();
 
-            String regexCorreo =
-                    "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+            String regexCorreo = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
-            if (correo.matches(
-                    regexCorreo))
-                break;
-
-            System.out.println(
-                    "Correo inválido.");
+            if (correo.matches(regexCorreo)) break;
+            System.out.println("Correo inválido.");
         }
 
         while (true) {
 
-            System.out.print(
-                    "Contraseña: ");
+            System.out.print("Contraseña: ");
 
-            password =
-                    reader.readLine();
+            password = reader.readLine();
 
-            String regexPassword =
-                    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,12}$";
+            String regexPassword = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,12}$";
 
-            if (password.matches(
-                    regexPassword))
-                break;
-
+            if (password.matches(regexPassword)) break;
             System.out.println(
                     """
                     La contraseña debe:

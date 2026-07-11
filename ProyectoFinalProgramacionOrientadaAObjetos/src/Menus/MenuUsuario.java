@@ -75,6 +75,7 @@ public class MenuUsuario {
                     break;
                 case 6 :
                     AdministradorUsuarios.AgregarCreditos(SesionUsuario.getUsuarioActivo());
+                    break;
                 case 7:
 
                     System.out.println(

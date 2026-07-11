@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuario {
+public class Usuario extends Cuenta{
     private String nombrCompleto;
     private LocalDate fechaDeNacimiento;
     private String nacionalidad;
@@ -18,22 +18,21 @@ public class Usuario {
     private List<ListaRepoduccion> listasPersonales;
     private List<Cancion>coleccionComprada;
     private ColaDeCanciones colaReproduccion;
-    private Cuenta cuentaUsuario;
 
     public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario,String correoElectronico,String contrasena) {
+        super(correoElectronico,contrasena,nombreDeUsuario);
         this.nombrCompleto = nombrCompleto;
         this.fechaDeNacimiento = fechaDeNacimiento;
         this.nacionalidad = nacionalidad;
         this.cedula = cedula;
         this.avatar = avatar;
-        this.cuentaUsuario = new Cuenta(correoElectronico,contrasena,nombreDeUsuario);
         this.colaReproduccion = new ColaDeCanciones();
         this.coleccionComprada = new ArrayList<>();
         this.listasPersonales = new ArrayList<>();
     }
 
     public String getNombrCompleto() {
-        return nombrCompleto;
+         return nombrCompleto;
     }
 
     public void setNombrCompleto(String nombrCompleto) {
@@ -63,7 +62,6 @@ public class Usuario {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-    public Cuenta getCuentaUsuario(){return this.cuentaUsuario;}
     public double getSaldo() {
         return saldo;
     }

@@ -104,8 +104,8 @@ public class Login {
 
         if (usuario == null) {
 
-            System.out.println(
-                    "Usuario o contraseña incorrectos.");
+            System.out.println("Usuario o contraseña incorrectos.");
+            return;
 
         }
 
