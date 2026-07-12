@@ -1,18 +1,18 @@
 package Entidades;
 
-public class Cuenta {
-    private String correoElectronico;
-    private String contrasena;
+public abstract class Cuenta {
+    protected String correoElectronico;
+    protected String contrasena;
     private String nombreUsuario;
 
-    public Cuenta(String correoElectronico, String contrasena, String nombreUsuario) {
+    protected Cuenta(String correoElectronico, String contrasena, String nombreUsuario) {
         this.correoElectronico = correoElectronico;
         this.contrasena = contrasena;
         this.nombreUsuario = nombreUsuario;
     }
 
     public String getNombreUsuario() {
-        return nombreUsuario;
+        return this.nombreUsuario;
     }
 
     public void setNombreUsuario(String nombreUsuario) {
@@ -20,7 +20,7 @@ public class Cuenta {
     }
 
     public String getCorreoElectronico() {
-        return correoElectronico;
+        return this.correoElectronico;
     }
 
     public void setCorreoElectronico(String correoElectronico) {
@@ -28,11 +28,11 @@ public class Cuenta {
     }
 
     public String getContrasena() {
-        return contrasena;
+        return this.contrasena;
     }
 
-    public String toString(){
-        return "Nombre de usuatio: "+this.nombreUsuario+"\n"+
-                "Correo electronico: "+this.correoElectronico;
+    public String toString() {
+        return "Nombre de usuatio: " + this.nombreUsuario + "\nCorreo electronico: " + this.correoElectronico;
     }
 }
+

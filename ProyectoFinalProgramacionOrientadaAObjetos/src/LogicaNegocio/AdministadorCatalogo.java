@@ -1,275 +1,200 @@
 package LogicaNegocio;
+
 import Entidades.Cancion;
 import Entidades.CatalogoGeneral;
-import util.BuscadorDeCanciones;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.List;
+import util.BuscadorDeCanciones;
 
 public class AdministadorCatalogo {
-    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader reader;
+
+    public AdministadorCatalogo() {
+    }
+
     public static void comprarCancion() throws IOException {
         int seleccionDeMenu = 0;
-        Cancion cancionACompar;
-        if(CatalogoGeneral.getCatalogoGlobal().isEmpty()){
+        if (CatalogoGeneral.getCatalogoGlobal().isEmpty()) {
             System.out.println("No hay canciones disponibles para la compra");
-            return;
-        }
-            System.out.println(
-                    "=====Compra de canciones=====\n" +
-                            "1.Buscar una cancion para comprar\n" +
-                            "2.Seleccionar del catalogo de canciones disponibles\n" +
-                            "3.Volver al menu principal");
-            while (true) {
+        } else {
+            System.out.println("=====Compra de canciones=====\n1.Buscar una cancion para comprar\n2.Seleccionar del catalogo de canciones disponibles\n3.Volver al menu principal");
+
+            while(true) {
                 try {
                     seleccionDeMenu = Integer.parseInt(reader.readLine());
                     break;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException var4) {
                     System.out.println("Ingrese un numero valdio");
                 }
             }
-            switch (seleccionDeMenu){
+
+            Cancion cancionACompar;
+            switch (seleccionDeMenu) {
                 case 1:
-                    cancionACompar = buscarCancion(CatalogoGeneral.getCatalogoGlobal(),true);
-                    if(cancionACompar != null){
+                    cancionACompar = buscarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
+                    if (cancionACompar != null) {
                         SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
                     }
-
                     break;
                 case 2:
-                    cancionACompar = seleccionarCancion(CatalogoGeneral.getCatalogoGlobal(),true);
+                    cancionACompar = seleccionarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
                     SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
             }
+
+        }
     }
-    public static Cancion opcionesDeCancio(List<Cancion>catalogoDisponible){
+
+    public static Cancion opcionesDeCancio(List<Cancion> catalogoDisponible) {
         int seleccionDeMenu = 0;
         Cancion cancionACompar = null;
-        if(catalogoDisponible.isEmpty()){
+        if (catalogoDisponible.isEmpty()) {
             System.out.println("No hay canciones disponibles");
             return null;
-        }
-        System.out.println(
-                "=====Opciones de cancion=====\n" +
-                        "1.Buscar una cancion \n" +
-                        "2.Seleccionar del catalogo de canciones disponibles\n" +
-                        "3.Volver al menu principal");
-        while (true) {
-            try {
-                seleccionDeMenu = Integer.parseInt(reader.readLine());
-                break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (NumberFormatException e) {
-                System.out.println("Ingrese un numero valdio");
-            }
-        }
-        switch (seleccionDeMenu){
-            case 1:
+        } else {
+            System.out.println("=====Opciones de cancion=====\n1.Buscar una cancion \n2.Seleccionar del catalogo de canciones disponibles\n3.Volver al menu principal");
+
+            while(true) {
                 try {
-                    cancionACompar = buscarCancion(catalogoDisponible,false);
+                    seleccionDeMenu = Integer.parseInt(reader.readLine());
+                    break;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } catch (NumberFormatException var6) {
+                    System.out.println("Ingrese un numero valdio");
                 }
-                if(cancionACompar != null){
-                    return cancionACompar;
-                }else{
-                    return null;
-                }
+            }
 
-            case 2:
-                cancionACompar = seleccionarCancion(catalogoDisponible,false);
-                return cancionACompar;
-            default:
-                throw new IllegalStateException("Unexpected value: " + seleccionDeMenu);
+            switch (seleccionDeMenu) {
+                case 1:
+                    try {
+                        cancionACompar = buscarCancion(catalogoDisponible, false);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if (cancionACompar != null) {
+                        return cancionACompar;
+                    }
+
+                    return null;
+                case 2:
+                    cancionACompar = seleccionarCancion(catalogoDisponible, false);
+                    return cancionACompar;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + seleccionDeMenu);
+            }
         }
     }
-    public static Cancion buscarCancion(List<Cancion> catalogoDeBusqueda,boolean mostrarCompleto) throws IOException {
+
+    public static Cancion buscarCancion(List<Cancion> catalogoDeBusqueda, boolean mostrarCompleto) throws IOException {
         System.out.println("Ingrese la cancion que desea buscar (Nombre, Artista, Genero)");
-        String parametroBusqueda =  reader.readLine();
-        List<Cancion>resultadosBusqueda = BuscadorDeCanciones.buscar(catalogoDeBusqueda,parametroBusqueda);
-        if(resultadosBusqueda.isEmpty()){
+        String parametroBusqueda = reader.readLine();
+        List<Cancion> resultadosBusqueda = BuscadorDeCanciones.buscar(catalogoDeBusqueda, parametroBusqueda);
+        if (resultadosBusqueda.isEmpty()) {
             System.out.println("La cancion buscada no fue encontrada");
             return null;
+        } else {
+            System.out.println("=====Resultados de la busqueda=====");
+            return seleccionarCancion(resultadosBusqueda, mostrarCompleto);
         }
-        System.out.println("=====Resultados de la busqueda=====");
-        return seleccionarCancion(resultadosBusqueda,mostrarCompleto);
     }
 
-    public static Cancion seleccionarCancion(List<Cancion> catalogoDisponible,boolean busquedaCompleta){
+    public static Cancion seleccionarCancion(List<Cancion> catalogoDisponible, boolean busquedaCompleta) {
         String mensajeMostrar = "";
         int opcionSeleccionada = 0;
-        for(int i = 0;i<catalogoDisponible.size();i++){
-            Cancion cancion = catalogoDisponible.get(i);
-            if (busquedaCompleta){
-              mensajeMostrar = i+". "+
-                      "Nombre: "+cancion.getNombre()+"\n"+
-                      "Album: "+cancion.getAlbum()+"\n"+
-                      "Artista: "+cancion.getArtista()+"\n"+
-                      "Compositor: "+cancion.getCompositor()+"\n"+
-                      "Genero: "+cancion.getGenero()+"\n"+
-                      "Fecha de lanzamiento: "+cancion.getFechaLanzamiento().toString()+"\n"+
-                      "Calificacion: "+cancion.getCalificacion()+"\n"+
-                      "Precio: "+cancion.getPrecio()+"\n"+
-                      "--------------------------------------------";
-            }else{
-                mensajeMostrar = i+". "+
-                        "Nombre: "+cancion.getNombre()+"\n"+
-                        "Album: "+cancion.getAlbum()+"\n"+
-                        "Artista: "+cancion.getArtista()+"\n"+
-                        "Compositor: "+cancion.getCompositor()+"\n"+
-                        "Genero: "+cancion.getGenero()+"\n"+
-                        "Fecha de lanzamiento: "+cancion.getFechaLanzamiento().toString()+"\n"+
-                        "Calificacion: "+cancion.getCalificacion()+"\n"+
-                        "--------------------------------------------";
+
+        for(int i = 0; i < catalogoDisponible.size(); ++i) {
+            Cancion cancion = (Cancion)catalogoDisponible.get(i);
+            if (busquedaCompleta) {
+                mensajeMostrar = i + ". Nombre: " + cancion.getNombre() + "\nAlbum: " + cancion.getAlbum() + "\nArtista: " + cancion.getArtista() + "\nCompositor: " + cancion.getCompositor() + "\nGenero: " + cancion.getGenero() + "\nFecha de lanzamiento: " + cancion.getFechaLanzamiento().toString() + "\nCalificacion: " + cancion.getCalificacion() + "\nPrecio: " + cancion.getPrecio() + "\n--------------------------------------------";
+            } else {
+                mensajeMostrar = i + ". Nombre: " + cancion.getNombre() + "\nAlbum: " + cancion.getAlbum() + "\nArtista: " + cancion.getArtista() + "\nCompositor: " + cancion.getCompositor() + "\nGenero: " + cancion.getGenero() + "\nFecha de lanzamiento: " + cancion.getFechaLanzamiento().toString() + "\nCalificacion: " + cancion.getCalificacion() + "\n--------------------------------------------";
             }
+
             System.out.println(mensajeMostrar);
         }
+
         System.out.println("Seleccione una de las canciones: ");
+
         while(true) {
             try {
                 opcionSeleccionada = Integer.parseInt(reader.readLine());
-                if (opcionSeleccionada > catalogoDisponible.size()) {
-                    System.out.println("Escoja una opcion valida");
-                } else {
-                    break;
+                if (opcionSeleccionada <= catalogoDisponible.size()) {
+                    return (Cancion)catalogoDisponible.get(opcionSeleccionada);
                 }
-            } catch (NumberFormatException e) {
+
+                System.out.println("Escoja una opcion valida");
+            } catch (NumberFormatException var6) {
                 System.out.println("Debe ingresar un numbero valido");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return catalogoDisponible.get(opcionSeleccionada);
     }
-    public static void agregarCancion()
-            throws IOException {
 
-        BufferedReader reader =
-                new BufferedReader(
-                        new InputStreamReader(
-                                System.in));
-
+    public static void agregarCancion() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println();
-        System.out.println(
-                "===== Agregar una nueva cancion =====");
-
-        System.out.print(
-                "Nombre: ");
-        String nombre =
-                reader.readLine().trim();
-
-        System.out.print(
-                "Genero: ");
-        String genero =
-                reader.readLine().trim();
-
-        System.out.print(
-                "Artista: ");
-        String artista =
-                reader.readLine().trim();
-
-        System.out.print(
-                "Compositor: ");
-        String compositor =
-                reader.readLine().trim();
+        System.out.println("===== Agregar una nueva cancion =====");
+        System.out.print("Nombre: ");
+        String nombre = reader.readLine().trim();
+        System.out.print("Genero: ");
+        String genero = reader.readLine().trim();
+        System.out.print("Artista: ");
+        String artista = reader.readLine().trim();
+        System.out.print("Compositor: ");
+        String compositor = reader.readLine().trim();
 
         LocalDate fechaLanzamiento;
-
-        while (true) {
-
+        while(true) {
             try {
-
-                System.out.print(
-                        "Fecha lanzamiento (YYYY-MM-DD): ");
-
-                fechaLanzamiento =
-                        LocalDate.parse(
-                                reader.readLine().trim());
-
+                System.out.print("Fecha lanzamiento (YYYY-MM-DD): ");
+                fechaLanzamiento = LocalDate.parse(reader.readLine().trim());
                 break;
-
-            } catch (Exception e) {
-
-                System.out.println(
-                        "Fecha invalida.");
+            } catch (Exception var15) {
+                System.out.println("Fecha invalida.");
             }
         }
 
-        System.out.print(
-                "Album: ");
-        String album =
-                reader.readLine().trim();
-
-        System.out.print(
-                "Caratula: ");
-        String caratula =
-                reader.readLine().trim();
+        System.out.print("Album: ");
+        String album = reader.readLine().trim();
+        System.out.print("Caratula: ");
+        String caratula = reader.readLine().trim();
 
         double calificacion;
-
-        while (true) {
-
+        while(true) {
             try {
-
-                System.out.print(
-                        "Calificacion: ");
-
-                calificacion =
-                        Double.parseDouble(
-                                reader.readLine());
-
+                System.out.print("Calificacion: ");
+                calificacion = Double.parseDouble(reader.readLine());
                 break;
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "Debe ingresar un numero valido.");
+            } catch (NumberFormatException var14) {
+                System.out.println("Debe ingresar un numero valido.");
             }
         }
 
         double precio;
-
-        while (true) {
-
+        while(true) {
             try {
-
-                System.out.print(
-                        "Precio: ");
-
-                precio =
-                        Double.parseDouble(
-                                reader.readLine());
-
+                System.out.print("Precio: ");
+                precio = Double.parseDouble(reader.readLine());
                 break;
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "Debe ingresar un numero valido.");
+            } catch (NumberFormatException var13) {
+                System.out.println("Debe ingresar un numero valido.");
             }
         }
 
-        Cancion nuevaCancion =
-                new Cancion(
-                        nombre,
-                        genero,
-                        artista,
-                        compositor,
-                        fechaLanzamiento,
-                        album,
-                        caratula,
-                        calificacion,
-                        precio);
-
+        Cancion nuevaCancion = new Cancion(nombre, genero, artista, compositor, fechaLanzamiento, album, caratula, calificacion, precio);
         CatalogoGeneral.agregarCancionAlCatalogo(nuevaCancion);
-
         System.out.println();
-        System.out.println(
-                "Cancion agregada correctamente.");
+        System.out.println("Cancion agregada correctamente.");
+    }
+
+    static {
+        reader = new BufferedReader(new InputStreamReader(System.in));
     }
 }

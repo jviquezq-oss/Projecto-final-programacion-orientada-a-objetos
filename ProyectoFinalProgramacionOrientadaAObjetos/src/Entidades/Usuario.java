@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuario {
+public class Usuario extends Cuenta {
     private String nombrCompleto;
     private LocalDate fechaDeNacimiento;
     private String nacionalidad;
@@ -16,24 +16,23 @@ public class Usuario {
     private String avatar;
     private double saldo;
     private List<ListaRepoduccion> listasPersonales;
-    private List<Cancion>coleccionComprada;
+    private List<Cancion> coleccionComprada;
     private ColaDeCanciones colaReproduccion;
-    private Cuenta cuentaUsuario;
 
-    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario,String correoElectronico,String contrasena) {
+    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena) {
+        super(correoElectronico, contrasena, nombreDeUsuario);
         this.nombrCompleto = nombrCompleto;
         this.fechaDeNacimiento = fechaDeNacimiento;
         this.nacionalidad = nacionalidad;
         this.cedula = cedula;
         this.avatar = avatar;
-        this.cuentaUsuario = new Cuenta(correoElectronico,contrasena,nombreDeUsuario);
         this.colaReproduccion = new ColaDeCanciones();
-        this.coleccionComprada = new ArrayList<>();
-        this.listasPersonales = new ArrayList<>();
+        this.coleccionComprada = new ArrayList();
+        this.listasPersonales = new ArrayList();
     }
 
     public String getNombrCompleto() {
-        return nombrCompleto;
+        return this.nombrCompleto;
     }
 
     public void setNombrCompleto(String nombrCompleto) {
@@ -41,7 +40,7 @@ public class Usuario {
     }
 
     public LocalDate getFechaDeNacimiento() {
-        return fechaDeNacimiento;
+        return this.fechaDeNacimiento;
     }
 
     public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
@@ -49,7 +48,7 @@ public class Usuario {
     }
 
     public String getNacionalidad() {
-        return nacionalidad;
+        return this.nacionalidad;
     }
 
     public void setNacionalidad(String nacionalidad) {
@@ -57,15 +56,15 @@ public class Usuario {
     }
 
     public String getAvatar() {
-        return avatar;
+        return this.avatar;
     }
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-    public Cuenta getCuentaUsuario(){return this.cuentaUsuario;}
+
     public double getSaldo() {
-        return saldo;
+        return this.saldo;
     }
 
     public void setSaldo(double saldo) {
@@ -73,7 +72,7 @@ public class Usuario {
     }
 
     public List<ListaRepoduccion> getListasPersonales() {
-        return listasPersonales;
+        return this.listasPersonales;
     }
 
     public void setListasPersonales(List<ListaRepoduccion> listasPersonales) {
@@ -81,7 +80,7 @@ public class Usuario {
     }
 
     public List<Cancion> getColeccionComprada() {
-        return coleccionComprada;
+        return this.coleccionComprada;
     }
 
     public void setColeccionComprada(List<Cancion> coleccionComprada) {
@@ -89,51 +88,46 @@ public class Usuario {
     }
 
     public ColaDeCanciones getColaReproduccion() {
-        return colaReproduccion;
+        return this.colaReproduccion;
     }
 
     public void setColaReproduccion(ColaDeCanciones colaReproduccion) {
         this.colaReproduccion = colaReproduccion;
     }
 
-    public void comprarCancion(Cancion cancion){
-        if(this.saldo>=cancion.getPrecio()){
-            this.saldo = this.saldo - cancion.getPrecio();
-            coleccionComprada.add(cancion);
+    public void comprarCancion(Cancion cancion) {
+        if (this.saldo >= cancion.getPrecio()) {
+            this.saldo -= cancion.getPrecio();
+            this.coleccionComprada.add(cancion);
             System.out.println("Cancion adquirida. Ahora disponible en la coleccion personal");
-        }else{
+        } else {
             System.out.println("Fondos insuficientes");
         }
+
     }
+
     public void agregarCancionALista(Cancion cancion, ListaRepoduccion listaReproduccion) throws IOException {
-        if(listaReproduccion.getCancionesContenidas().contains(cancion)){
+        if (listaReproduccion.getCancionesContenidas().contains(cancion)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("La lista: "+listaReproduccion.getNombre()+" ya contiene la cancion seleccionada.\n Deasea agregar la cancion de todas formas? (Y/N)");
+            System.out.println("La lista: " + listaReproduccion.getNombre() + " ya contiene la cancion seleccionada.\n Deasea agregar la cancion de todas formas? (Y/N)");
             String continuar = reader.readLine();
-            if(continuar.toUpperCase().trim().equals("Y")){
+            if (continuar.toUpperCase().trim().equals("Y")) {
                 listaReproduccion.agregarCanciones(cancion);
                 System.out.println("Cancion agregada a la lista de reproduccion");
-            }else{
+            } else {
                 listaReproduccion.agregarCanciones(cancion);
                 System.out.println("Cancion agregada a la lista de reproduccion");
             }
-
-
         }
+
     }
-    public void agregarCancionACola(ColaDeCanciones colaActual,Cancion cancion){
+
+    public void agregarCancionACola(ColaDeCanciones colaActual, Cancion cancion) {
         colaActual.insertarElemento(cancion);
         System.out.println("Cancion agregada a la cola de reproduccion");
     }
 
-    @Override
     public String toString() {
-        return "Usuario\n" +
-                "nombrCompleto='" + nombrCompleto + '\'' +
-                ", fechaDeNacimiento=" + fechaDeNacimiento +
-                ", nacionalidad='" + nacionalidad + '\'' +
-                ", cedula='" + cedula + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", saldo=" + saldo;
+        return "Usuario\nnombrCompleto='" + this.nombrCompleto + "', fechaDeNacimiento=" + this.fechaDeNacimiento + ", nacionalidad='" + this.nacionalidad + "', cedula='" + this.cedula + "', avatar='" + this.avatar + "', saldo=" + this.saldo;
     }
 }
