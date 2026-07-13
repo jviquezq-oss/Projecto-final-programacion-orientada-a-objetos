@@ -3,7 +3,7 @@ package Entidades;
 import java.time.LocalDate;
 
 public class Cancion {
-    private  static int idCanciones;
+    private static int idCanciones;
     private int idCancion;
     private String nombre;
     private String genero;
@@ -16,7 +16,7 @@ public class Cancion {
     private double precio;
 
     public Cancion(String nombre, String genero, String artista, String compositor, LocalDate fechaLanzamiento, String album, String caratula, double calificacion, double precio) {
-        this.idCancion = idCanciones ++;
+        this.idCancion = idCanciones++;
         this.nombre = nombre;
         this.genero = genero;
         this.artista = artista;
@@ -29,7 +29,7 @@ public class Cancion {
     }
 
     public int getIdCancion() {
-        return idCancion;
+        return this.idCancion;
     }
 
     public void setIdCancion(int idCancion) {
@@ -37,7 +37,7 @@ public class Cancion {
     }
 
     public String getNombre() {
-        return nombre;
+        return this.nombre;
     }
 
     public void setNombre(String nombre) {
@@ -45,7 +45,7 @@ public class Cancion {
     }
 
     public String getGenero() {
-        return genero;
+        return this.genero;
     }
 
     public void setGenero(String genero) {
@@ -53,7 +53,7 @@ public class Cancion {
     }
 
     public String getArtista() {
-        return artista;
+        return this.artista;
     }
 
     public void setArtista(String artista) {
@@ -61,7 +61,7 @@ public class Cancion {
     }
 
     public String getCompositor() {
-        return compositor;
+        return this.compositor;
     }
 
     public void setCompositor(String compositor) {
@@ -69,7 +69,7 @@ public class Cancion {
     }
 
     public LocalDate getFechaLanzamiento() {
-        return fechaLanzamiento;
+        return this.fechaLanzamiento;
     }
 
     public void setFechaLanzamiento(LocalDate fechaLanzamiento) {
@@ -77,7 +77,7 @@ public class Cancion {
     }
 
     public String getAlbum() {
-        return album;
+        return this.album;
     }
 
     public void setAlbum(String album) {
@@ -85,7 +85,7 @@ public class Cancion {
     }
 
     public String getCaratula() {
-        return caratula;
+        return this.caratula;
     }
 
     public void setCaratula(String caratula) {
@@ -93,7 +93,7 @@ public class Cancion {
     }
 
     public double getCalificacion() {
-        return calificacion;
+        return this.calificacion;
     }
 
     public void setCalificacion(double calificacion) {
@@ -101,25 +101,14 @@ public class Cancion {
     }
 
     public double getPrecio() {
-        return precio;
+        return this.precio;
     }
 
     public void setPrecio(double precio) {
         this.precio = precio;
     }
 
-    @Override
     public String toString() {
-        return "Cancion:" +
-                "idCancion:" + idCancion +
-                ", nombre:" + nombre + '\'' +
-                ", genero:" + genero + '\'' +
-                ", artista:" + artista + '\'' +
-                ", compositor:" + compositor + '\'' +
-                ", fechaLanzamiento:" + fechaLanzamiento +
-                ", album:" + album + '\'' +
-                ", caratula:" + caratula + '\'' +
-                ", calificacion:" + calificacion +
-                ", precio:" + precio;
+        return "Cancion:idCancion:" + this.idCancion + ", nombre:" + this.nombre + "', genero:" + this.genero + "', artista:" + this.artista + "', compositor:" + this.compositor + "', fechaLanzamiento:" + this.fechaLanzamiento + ", album:" + this.album + "', caratula:" + this.caratula + "', calificacion:" + this.calificacion + ", precio:" + this.precio;
     }
 }

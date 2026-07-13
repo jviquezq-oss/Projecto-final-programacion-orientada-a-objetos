@@ -7,33 +7,32 @@ public abstract class Cuenta {
     private String nombreUsuario;
 
     protected Cuenta(String correoElectronico, String contrasena, String nombreUsuario) {
-            this.correoElectronico = correoElectronico;
-            this.contrasena = contrasena;
-            this.nombreUsuario = nombreUsuario;
-        }
+        this.correoElectronico = correoElectronico;
+        this.contrasena = contrasena;
+        this.nombreUsuario = nombreUsuario;
+    }
 
-        public String getNombreUsuario() {
-            return nombreUsuario;
-        }
+    public String getNombreUsuario() {
+        return this.nombreUsuario;
+    }
 
-        public void setNombreUsuario(String nombreUsuario) {
-            this.nombreUsuario = nombreUsuario;
-        }
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 
-        public String getCorreoElectronico() {
-            return correoElectronico;
-        }
+    public String getCorreoElectronico() {
+        return correoElectronico;
+    }
 
-        public void setCorreoElectronico(String correoElectronico) {
-            this.correoElectronico = correoElectronico;
-        }
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
+    }
 
-        public String getContrasena() {
-            return contrasena;
-        }
+    public String getContrasena() {
+        return contrasena;
+    }
 
-        public String toString(){
-            return "Nombre de usuatio: "+this.nombreUsuario+"\n"+
-                    "Correo electronico: "+this.correoElectronico;
-        }
+    public String toString() {
+        return "Nombre de usuatio: " + this.nombreUsuario + "\nCorreo electronico: " + this.correoElectronico;
+    }
 }

@@ -6,3 +6,4 @@ public class Administador extends Cuenta {
         super(correoElectronico,contrasena,nombreUsuario);
     }
 }
+
