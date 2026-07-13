@@ -2,6 +2,8 @@ package LogicaNegocio;
 
 import Entidades.Cancion;
 import Entidades.CatalogoGeneral;
+import Excepciones.CancionNoEncontradaException;
+import Excepciones.SaldoInsuficienteException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,14 +38,23 @@ public class AdministadorCatalogo {
             Cancion cancionACompar;
             switch (seleccionDeMenu) {
                 case 1:
-                    cancionACompar = buscarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
-                    if (cancionACompar != null) {
-                        SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
+                    try {
+                        cancionACompar = buscarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
+                        if (cancionACompar != null) {
+                            SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
+                        }
+                    } catch (CancionNoEncontradaException | SaldoInsuficienteException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 2:
-                    cancionACompar = seleccionarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
-                    SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
+                    try {
+                        cancionACompar = seleccionarCancion(CatalogoGeneral.getCatalogoGlobal(), true);
+                        SesionUsuario.getUsuarioActivo().comprarCancion(cancionACompar);
+                    } catch (SaldoInsuficienteException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
             }
 
         }
@@ -75,6 +86,9 @@ public class AdministadorCatalogo {
                         cancionACompar = buscarCancion(catalogoDisponible, false);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    } catch (CancionNoEncontradaException e) {
+                        System.out.println(e.getMessage());
+                        return null;
                     }
 
                     if (cancionACompar != null) {
@@ -91,13 +105,12 @@ public class AdministadorCatalogo {
         }
     }
 
-    public static Cancion buscarCancion(List<Cancion> catalogoDeBusqueda, boolean mostrarCompleto) throws IOException {
+    public static Cancion buscarCancion(List<Cancion> catalogoDeBusqueda, boolean mostrarCompleto) throws IOException, CancionNoEncontradaException {
         System.out.println("Ingrese la cancion que desea buscar (Nombre, Artista, Genero)");
         String parametroBusqueda = reader.readLine();
         List<Cancion> resultadosBusqueda = BuscadorDeCanciones.buscar(catalogoDeBusqueda, parametroBusqueda);
         if (resultadosBusqueda.isEmpty()) {
-            System.out.println("La cancion buscada no fue encontrada");
-            return null;
+            throw new CancionNoEncontradaException("La cancion buscada no fue encontrada");
         } else {
             System.out.println("=====Resultados de la busqueda=====");
             return seleccionarCancion(resultadosBusqueda, mostrarCompleto);

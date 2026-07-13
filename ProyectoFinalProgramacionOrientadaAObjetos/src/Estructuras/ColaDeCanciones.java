@@ -1,6 +1,7 @@
 package Estructuras;
 
 import Entidades.Cancion;
+import Excepciones.ColaVaciaException;
 import java.util.ArrayList;
 
 public class ColaDeCanciones {
@@ -13,10 +14,9 @@ public class ColaDeCanciones {
         this.colaCanciones.add(cancion);
     }
 
-    public Cancion removerElemento() {
+    public Cancion removerElemento() throws ColaVaciaException {
         if (this.colaCanciones.isEmpty()) {
-            System.out.println("No hay canciones en la cola.");
-            return null;
+            throw new ColaVaciaException("La cola de canciones está vacía.");
         } else {
             Cancion temp = (Cancion)this.colaCanciones.get(0);
             this.colaCanciones.remove(0);
@@ -24,10 +24,9 @@ public class ColaDeCanciones {
         }
     }
 
-    public Cancion verFrente() {
+    public Cancion verFrente() throws ColaVaciaException {
         if (this.colaCanciones.isEmpty()) {
-            System.out.println("No hay canciones en la cola");
-            return null;
+            throw new ColaVaciaException("La cola de canciones está vacía.");
         } else {
             return (Cancion)this.colaCanciones.get(0);
         }

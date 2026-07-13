@@ -2,6 +2,9 @@ package LogicaNegocio;
 
 import Entidades.Administador;
 import Entidades.Usuario;
+import Excepciones.CredencialesInvalidasException;
+import Excepciones.DatosInvalidosException;
+import Excepciones.NombreUsuarioDuplicadoException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +20,29 @@ public class AdministradorUsuarios {
     public AdministradorUsuarios() {
     }
 
-    public static void registrarUsuario(String nombreCompleto, LocalDate fechaNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correo, String contrasena) {
+    public static void registrarUsuario(String nombreCompleto, LocalDate fechaNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correo, String contrasena) throws NombreUsuarioDuplicadoException, DatosInvalidosException {
+        if (nombreCompleto == null || nombreCompleto.trim().isEmpty()) {
+            throw new DatosInvalidosException("El nombre completo no puede estar vacío.");
+        }
+        if (nacionalidad == null || nacionalidad.trim().isEmpty()) {
+            throw new DatosInvalidosException("La nacionalidad no puede estar vacía.");
+        }
+        if (cedula == null || cedula.trim().isEmpty()) {
+            throw new DatosInvalidosException("La cédula no puede estar vacía.");
+        }
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+            throw new DatosInvalidosException("El nombre de usuario no puede estar vacío.");
+        }
+        if (existeNombreUsuario(nombreUsuario)) {
+            throw new NombreUsuarioDuplicadoException("Ese nombre de usuario ya existe.");
+        }
+        if (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new DatosInvalidosException("Correo inválido.");
+        }
+        if (contrasena == null || !contrasena.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,12}$")) {
+            throw new DatosInvalidosException("La contraseña debe:\n- Tener entre 8 y 12 caracteres\n- Tener una mayúscula\n- Tener una minúscula\n- Tener un número\n- Tener un carácter especial\n");
+        }
+
         Usuario usuario = new Usuario(nombreCompleto, fechaNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correo, contrasena);
         usuario.setSaldo((double)200.0F);
         usuariosDeSistema.add(usuario);
@@ -33,7 +58,7 @@ public class AdministradorUsuarios {
         return false;
     }
 
-    public static Usuario autenticarUsuario(String nombreUsuario, String contrasena) {
+    public static Usuario autenticarUsuario(String nombreUsuario, String contrasena) throws CredencialesInvalidasException {
         for(Usuario usuario : usuariosDeSistema) {
             if (usuario.getNombreUsuario().equalsIgnoreCase(nombreUsuario) && usuario.getContrasena().equalsIgnoreCase(contrasena)) {
                 SesionUsuario.setUsuarioActivo(usuario);
@@ -41,17 +66,17 @@ public class AdministradorUsuarios {
             }
         }
 
-        return null;
+        throw new CredencialesInvalidasException("Usuario o contraseña incorrectos.");
     }
 
-    public static Administador autenticarUsuarioAdmin(String nombreUsuario, String contrasena) {
+    public static Administador autenticarUsuarioAdmin(String nombreUsuario, String contrasena) throws CredencialesInvalidasException {
         for(Administador administador : administradoresDeSistema) {
             if (administador.getNombreUsuario().equalsIgnoreCase(nombreUsuario) && administador.getContrasena().equalsIgnoreCase(contrasena)) {
                 return administador;
             }
         }
 
-        return null;
+        throw new CredencialesInvalidasException("Usuario o contraseña incorrectos.");
     }
 
     public static void solicitarUsuario() throws IOException {
@@ -101,10 +126,14 @@ public class AdministradorUsuarios {
                                                         String password = reader.readLine();
                                                         regexCorreo = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,12}$";
                                                         if (password.matches(regexCorreo)) {
-                                                            registrarUsuario(nombreCompleto, fechaNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correo, password);
-                                                            System.out.println();
-                                                            System.out.println("Usuario registrado correctamente.");
-                                                            return;
+                                                            try {
+                                                                registrarUsuario(nombreCompleto, fechaNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correo, password);
+                                                                System.out.println();
+                                                                System.out.println("Usuario registrado correctamente.");
+                                                                return;
+                                                            } catch (NombreUsuarioDuplicadoException | DatosInvalidosException e) {
+                                                                System.out.println(e.getMessage());
+                                                            }
                                                         }
 
                                                         System.out.println("La contraseña debe:\n- Tener entre 8 y 12 caracteres\n- Tener una mayúscula\n- Tener una minúscula\n- Tener un número\n- Tener un carácter especial\n");

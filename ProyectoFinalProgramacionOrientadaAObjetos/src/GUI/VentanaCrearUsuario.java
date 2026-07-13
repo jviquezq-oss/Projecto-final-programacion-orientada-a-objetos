@@ -1,5 +1,7 @@
 package GUI;
 
+import Excepciones.DatosInvalidosException;
+import Excepciones.NombreUsuarioDuplicadoException;
 import LogicaNegocio.AdministradorUsuarios;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -128,44 +130,44 @@ public class VentanaCrearUsuario extends JFrame {
         });
     }
 
-    private void validarCampos() throws Exception {
+    private void validarCampos() throws DatosInvalidosException, NombreUsuarioDuplicadoException {
         if (this.txtNombreCompleto.getText().trim().isEmpty()) {
-            throw new Exception("Nombre completo requerido.");
+            throw new DatosInvalidosException("Nombre completo requerido.");
         } else if (this.txtFechaNacimiento.getText().trim().isEmpty()) {
-            throw new Exception("Fecha de nacimiento requerida.");
+            throw new DatosInvalidosException("Fecha de nacimiento requerida.");
         } else {
             try {
                 LocalDate.parse(this.txtFechaNacimiento.getText().trim());
             } catch (Exception var6) {
-                throw new Exception("Formato de fecha inválido. Use YYYY-MM-DD.");
+                throw new DatosInvalidosException("Formato de fecha inválido. Use YYYY-MM-DD.");
             }
 
             if (this.txtNacionalidad.getText().trim().isEmpty()) {
-                throw new Exception("Nacionalidad requerida.");
+                throw new DatosInvalidosException("Nacionalidad requerida.");
             } else if (this.txtCedula.getText().trim().isEmpty()) {
-                throw new Exception("Cédula requerida.");
+                throw new DatosInvalidosException("Cédula requerida.");
             } else {
                 String username = this.txtNombreUsuario.getText().trim();
                 if (username.isEmpty()) {
-                    throw new Exception("Nombre de usuario requerido.");
+                    throw new DatosInvalidosException("Nombre de usuario requerido.");
                 } else if (AdministradorUsuarios.existeNombreUsuario(username)) {
-                    throw new Exception("El nombre de usuario ya existe.");
+                    throw new NombreUsuarioDuplicadoException("El nombre de usuario ya existe.");
                 } else {
                     String correo = this.txtCorreo.getText().trim();
                     if (correo.isEmpty()) {
-                        throw new Exception("Correo electrónico requerido.");
+                        throw new DatosInvalidosException("Correo electrónico requerido.");
                     } else {
                         String regexCorreo = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
                         if (!correo.matches(regexCorreo)) {
-                            throw new Exception("Correo electrónico inválido.");
+                            throw new DatosInvalidosException("Correo electrónico inválido.");
                         } else {
                             String password = String.valueOf(this.txtContrasena.getPassword());
                             if (password.isBlank()) {
-                                throw new Exception("Contraseña requerida.");
+                                throw new DatosInvalidosException("Contraseña requerida.");
                             } else {
                                 String regexPassword = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,12}$";
                                 if (!password.matches(regexPassword)) {
-                                    throw new Exception("La contraseña debe:\n- Tener entre 8 y 12 caracteres\n- Tener una mayúscula\n- Tener una minúscula\n- Tener un número\n- Tener un carácter especial\n");
+                                    throw new DatosInvalidosException("La contraseña debe:\n- Tener entre 8 y 12 caracteres\n- Tener una mayúscula\n- Tener una minúscula\n- Tener un número\n- Tener un carácter especial\n");
                                 }
                             }
                         }

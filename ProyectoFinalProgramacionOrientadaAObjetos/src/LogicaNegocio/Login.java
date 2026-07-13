@@ -2,6 +2,7 @@ package LogicaNegocio;
 
 import Entidades.Administador;
 import Entidades.Usuario;
+import Excepciones.CredencialesInvalidasException;
 import Menus.MenuAdministrador;
 import Menus.MenuUsuario;
 import java.io.BufferedReader;
@@ -60,12 +61,12 @@ public class Login {
         String username = reader.readLine();
         System.out.print("Contraseña: ");
         String password = reader.readLine();
-        Usuario usuario = AdministradorUsuarios.autenticarUsuario(username, password);
-        if (usuario == null) {
-            System.out.println("Usuario o contraseña incorrectos.");
-        } else {
+        try {
+            Usuario usuario = AdministradorUsuarios.autenticarUsuario(username, password);
             System.out.println("Bienvenido " + usuario.getNombrCompleto());
             MenuUsuario.mostrarMenu();
+        } catch (CredencialesInvalidasException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -76,11 +77,12 @@ public class Login {
         String username = reader.readLine();
         System.out.print("Contraseña: ");
         String password = reader.readLine();
-        Administador admin = AdministradorUsuarios.autenticarUsuarioAdmin(username, password);
-        if (admin == null) {
-            System.out.println("Usuario o contraseña incorrectos.");
-        } else {
+        try {
+            Administador admin = AdministradorUsuarios.autenticarUsuarioAdmin(username, password);
+            System.out.println("Bienvenido Administrador.");
             MenuAdministrador.mostrarMenuAdministrador();
+        } catch (CredencialesInvalidasException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

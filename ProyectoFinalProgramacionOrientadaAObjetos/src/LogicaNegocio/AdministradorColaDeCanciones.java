@@ -2,6 +2,7 @@ package LogicaNegocio;
 
 import Entidades.Cancion;
 import Estructuras.ColaDeCanciones;
+import Excepciones.CancionNoEncontradaException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,10 +35,14 @@ public class AdministradorColaDeCanciones {
             Cancion cancionAgregar;
             switch (seleccionDeMenu) {
                 case 1:
-                    cancionAgregar = AdministadorCatalogo.buscarCancion(catalogoDisponible, false);
-                    if (cancionAgregar != null) {
-                        colaActual.insertarElemento(cancionAgregar);
-                        System.out.println("Cancion ingresada a la cola de repoduccion");
+                    try {
+                        cancionAgregar = AdministadorCatalogo.buscarCancion(catalogoDisponible, false);
+                        if (cancionAgregar != null) {
+                            colaActual.insertarElemento(cancionAgregar);
+                            System.out.println("Cancion ingresada a la cola de repoduccion");
+                        }
+                    } catch (CancionNoEncontradaException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 2:

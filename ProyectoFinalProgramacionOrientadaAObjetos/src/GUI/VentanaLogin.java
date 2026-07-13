@@ -1,6 +1,8 @@
 package GUI;
 
 import Entidades.Usuario;
+import Excepciones.CredencialesInvalidasException;
+import Excepciones.DatosInvalidosException;
 import LogicaNegocio.AdministradorUsuarios;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -84,26 +86,21 @@ public class VentanaLogin extends JFrame {
             try {
                 this.validarCampos();
                 Usuario usuario = AdministradorUsuarios.autenticarUsuario(this.txtNombreUsuario.getText().trim(), String.valueOf(this.txtContrasena.getPassword()));
-                if (usuario == null) {
-                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", 0);
-                    this.txtContrasena.setText("");
-                    return;
-                }
-
                 JOptionPane.showMessageDialog(this, "Bienvenido " + usuario.getNombrCompleto());
                 this.dispose();
-            } catch (Exception ex) {
+            } catch (DatosInvalidosException | CredencialesInvalidasException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", 0);
+                this.txtContrasena.setText("");
             }
 
         });
     }
 
-    private void validarCampos() throws Exception {
+    private void validarCampos() throws DatosInvalidosException {
         if (this.txtNombreUsuario.getText().trim().isEmpty()) {
-            throw new Exception("Debe ingresar un nombre de usuario.");
+            throw new DatosInvalidosException("Debe ingresar un nombre de usuario.");
         } else if (String.valueOf(this.txtContrasena.getPassword()).trim().isEmpty()) {
-            throw new Exception("Debe ingresar una contraseña.");
+            throw new DatosInvalidosException("Debe ingresar una contraseña.");
         }
     }
 }

@@ -1,6 +1,7 @@
 package Entidades;
 
 import Estructuras.ColaDeCanciones;
+import Excepciones.SaldoInsuficienteException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -95,13 +96,13 @@ public class Usuario extends Cuenta{
         this.colaReproduccion = colaReproduccion;
     }
 
-    public void comprarCancion(Cancion cancion) {
+    public void comprarCancion(Cancion cancion) throws SaldoInsuficienteException {
         if (this.saldo >= cancion.getPrecio()) {
             this.saldo -= cancion.getPrecio();
             this.coleccionComprada.add(cancion);
             System.out.println("Cancion adquirida. Ahora disponible en la coleccion personal");
         } else {
-            System.out.println("Fondos insuficientes");
+            throw new SaldoInsuficienteException("Saldo insuficiente para comprar la canción: " + cancion.getNombre());
         }
 
     }
