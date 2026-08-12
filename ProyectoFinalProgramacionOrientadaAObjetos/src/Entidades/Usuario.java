@@ -1,39 +1,67 @@
 package Entidades;
 
 import Estructuras.ColaDeCanciones;
-import Excepciones.SaldoInsuficienteException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import Excepciones.DatosInvalidosException;
 
-public class Usuario extends Cuenta{
+import java.time.LocalDate;
+import java.time.Period;
+
+public class Usuario extends Cuenta {
+
+    public static final double BONO_BIENVENIDA = 4.99;
+    public static final String AVATAR_PREDETERMINADO = "avatar_predeterminado.png";
     private String nombrCompleto;
     private LocalDate fechaDeNacimiento;
     private String nacionalidad;
     private String cedula;
     private String avatar;
     private double saldo;
-    private List<ListaRepoduccion> listasPersonales;
-    private List<Cancion> coleccionComprada;
-    private ColaDeCanciones colaReproduccion;
+    private final ColaDeCanciones colaReproduccion;
 
-    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario,String correoElectronico,String contrasena) {
-        super(correoElectronico,contrasena,nombreDeUsuario);
+    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena) {
+        this(nombrCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreDeUsuario, correoElectronico, contrasena, BONO_BIENVENIDA);
+    }
+
+    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena, double saldoInicial) {
+        super(correoElectronico, contrasena, nombreDeUsuario);
         this.nombrCompleto = nombrCompleto;
         this.fechaDeNacimiento = fechaDeNacimiento;
         this.nacionalidad = nacionalidad;
         this.cedula = cedula;
-        this.avatar = avatar;
+        this.avatar = (avatar == null || avatar.isBlank())
+                ? AVATAR_PREDETERMINADO
+                : avatar;
+        this.saldo = saldoInicial;
         this.colaReproduccion = new ColaDeCanciones();
-        this.coleccionComprada = new ArrayList();
-        this.listasPersonales = new ArrayList();
+    }
+
+    public Usuario(int idCuenta, String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena, double saldoInicial) {
+        super(idCuenta, correoElectronico, contrasena, nombreDeUsuario);
+        this.nombrCompleto = nombrCompleto;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.cedula = cedula;
+        this.avatar = (avatar == null || avatar.isBlank())
+                ? AVATAR_PREDETERMINADO
+                : avatar;
+        this.saldo = saldoInicial;
+        this.colaReproduccion = new ColaDeCanciones();
+    }
+    public Usuario(int idCuenta, String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, double saldoInicial) {
+        super(idCuenta, correoElectronico, nombreDeUsuario);
+        this.nombrCompleto = nombrCompleto;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.cedula = cedula;
+        this.avatar = (avatar == null || avatar.isBlank())
+                ? AVATAR_PREDETERMINADO
+                : avatar;
+        this.saldo = saldoInicial;
+        this.colaReproduccion = new ColaDeCanciones();
     }
 
     public String getNombrCompleto() {
-        return this.nombrCompleto;
+        return nombrCompleto;
     }
 
     public void setNombrCompleto(String nombrCompleto) {
@@ -41,7 +69,7 @@ public class Usuario extends Cuenta{
     }
 
     public LocalDate getFechaDeNacimiento() {
-        return this.fechaDeNacimiento;
+        return fechaDeNacimiento;
     }
 
     public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
@@ -49,86 +77,79 @@ public class Usuario extends Cuenta{
     }
 
     public String getNacionalidad() {
-        return this.nacionalidad;
+        return nacionalidad;
     }
 
     public void setNacionalidad(String nacionalidad) {
         this.nacionalidad = nacionalidad;
     }
 
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
+    }
+
     public String getAvatar() {
-        return this.avatar;
+        return avatar;
     }
 
     public void setAvatar(String avatar) {
-        this.avatar = avatar;
+        this.avatar = (avatar == null || avatar.isBlank())
+                ? AVATAR_PREDETERMINADO
+                : avatar;
     }
 
     public double getSaldo() {
-        return this.saldo;
+        return saldo;
     }
 
     public void setSaldo(double saldo) {
-        this.saldo = saldo;
+        if (saldo < 0) {
+            throw new IllegalArgumentException("El saldo no puede ser negativo.");
+        }
+        this.saldo = Math.round(saldo * 100.0) / 100.0;
     }
 
-    public List<ListaRepoduccion> getListasPersonales() {
-        return this.listasPersonales;
+    public void agregarSaldo(double cantidad) throws DatosInvalidosException {
+        if (cantidad <= 0) {
+            throw new DatosInvalidosException("La recarga debe ser mayor que cero.");
+        }
+        setSaldo(this.saldo + cantidad);
     }
-
-    public void setListasPersonales(List<ListaRepoduccion> listasPersonales) {
-        this.listasPersonales = listasPersonales;
-    }
-
-    public List<Cancion> getColeccionComprada() {
-        return this.coleccionComprada;
-    }
-
-    public void setColeccionComprada(List<Cancion> coleccionComprada) {
-        this.coleccionComprada = coleccionComprada;
-    }
-
     public ColaDeCanciones getColaReproduccion() {
-        return this.colaReproduccion;
+        return colaReproduccion;
     }
 
-    public void setColaReproduccion(ColaDeCanciones colaReproduccion) {
-        this.colaReproduccion = colaReproduccion;
+    public void agregarCancionACola(Cancion cancion)
+            throws DatosInvalidosException {
+
+        if (cancion == null) {
+            throw new DatosInvalidosException("La canción seleccionada no es válida.");
+        }
+        colaReproduccion.insertarElemento(cancion);
     }
 
-    public void comprarCancion(Cancion cancion) throws SaldoInsuficienteException {
-        if (this.saldo >= cancion.getPrecio()) {
-            this.saldo -= cancion.getPrecio();
-            this.coleccionComprada.add(cancion);
-            System.out.println("Cancion adquirida. Ahora disponible en la coleccion personal");
-        } else {
-            throw new SaldoInsuficienteException("Saldo insuficiente para comprar la canción: " + cancion.getNombre());
+    public static boolean esMayorDeEdad(LocalDate fechaNacimiento) {
+        if (fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())) {
+            return false;
         }
 
+        return Period.between(fechaNacimiento, LocalDate.now()).getYears() >= 18;
     }
 
-    public void agregarCancionALista(Cancion cancion, ListaRepoduccion listaReproduccion) throws IOException {
-        if (listaReproduccion.getCancionesContenidas().contains(cancion)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("La lista: " + listaReproduccion.getNombre() + " ya contiene la cancion seleccionada.\n Deasea agregar la cancion de todas formas? (Y/N)");
-            String continuar = reader.readLine();
-            if (continuar.toUpperCase().trim().equals("Y")) {
-                listaReproduccion.agregarCanciones(cancion);
-                System.out.println("Cancion agregada a la lista de reproduccion");
-            } else {
-                listaReproduccion.agregarCanciones(cancion);
-                System.out.println("Cancion agregada a la lista de reproduccion");
-            }
-        }
-
-    }
-
-    public void agregarCancionACola(ColaDeCanciones colaActual, Cancion cancion) {
-        colaActual.insertarElemento(cancion);
-        System.out.println("Cancion agregada a la cola de reproduccion");
-    }
-
+    @Override
     public String toString() {
-        return "Usuario\nnombrCompleto='" + this.nombrCompleto + "', fechaDeNacimiento=" + this.fechaDeNacimiento + ", nacionalidad='" + this.nacionalidad + "', cedula='" + this.cedula + "', avatar='" + this.avatar + "', saldo=" + this.saldo;
+        return "Usuario{" +
+                "idCuenta=" + getIdCuenta() +
+                ", nombrCompleto='" + nombrCompleto + '\'' +
+                ", fechaDeNacimiento=" + fechaDeNacimiento +
+                ", nacionalidad='" + nacionalidad + '\'' +
+                ", cedula='" + cedula + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", saldo=" + saldo +
+                '}';
     }
 }

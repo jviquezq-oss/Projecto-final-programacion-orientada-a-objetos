@@ -1,50 +1,57 @@
 package Menus;
 
-import LogicaNegocio.AdministadorCatalogo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MenuAdministrador {
-    private static BufferedReader reader;
 
-    public MenuAdministrador() {
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+    private MenuAdministrador() {
     }
 
-    public static void mostrarMenuAdministrador() throws IOException {
-        int opcion = 0;
+    public static int mostrarMenu() throws IOException {
+        System.out.println("\n========================================");
+        System.out.println("          MENÚ DE ADMINISTRADOR");
+        System.out.println("========================================");
+        System.out.println("1. Administrar canciones");
+        System.out.println("2. Administrar usuarios");
+        System.out.println("3. Consultar estadísticas");
+        System.out.println("4. Reproducir canciones");
+        System.out.println("5. Reproducir listas de reproducción");
+        System.out.println("0. Cerrar sesión");
+        System.out.println("========================================");
+        System.out.print("Seleccione una opción: ");
 
-        do {
-            System.out.println();
-            System.out.println("===== MENU ADMINISTRADOR =====");
-            System.out.println("1. Agregar nueva canción al catálogo");
-            System.out.println("2. Salir");
-            System.out.print("Seleccione una opción: ");
+        String entrada = reader.readLine();
 
-            try {
-                opcion = Integer.parseInt(reader.readLine());
-            } catch (NumberFormatException var2) {
-                System.out.println("Debe ingresar un número válido.");
-                continue;
-            }
-
-            switch (opcion) {
-                case 1:
-                    AdministadorCatalogo.agregarCancion();
-                    System.out.println("\nPresione ENTER para continuar...");
-                    reader.readLine();
-                    break;
-                case 2:
-                    System.out.println("Cerrando menú administrador...");
-                    break;
-                default:
-                    System.out.println("Seleccione una opción válida.");
-            }
-        } while(opcion != 2);
-
+        try {
+            return Integer.parseInt(entrada);
+        } catch (NumberFormatException e) {
+            System.out.println("Debe ingresar un número valido.");
+            return -1;
+        }
     }
+    public static int menuCanciones() throws IOException {
+        System.out.println("\n========================================");
+        System.out.println("       ADMINISTRACIÓN DE CANCIONES");
+        System.out.println("========================================");
+        System.out.println("1. Crear canción");
+        System.out.println("2. Buscar canción");
+        System.out.println("3. Modificar canción");
+        System.out.println("4. Eliminar canción");
+        System.out.println("0. Regresar");
+        System.out.println("========================================");
+        System.out.print("Seleccione una opción: ");
 
-    static {
-        reader = new BufferedReader(new InputStreamReader(System.in));
+        String entrada = reader.readLine();
+
+        try {
+            return Integer.parseInt(entrada);
+        } catch (NumberFormatException e) {
+            System.out.println("Debe ingresar un número entero.");
+            return -1;
+        }
     }
 }

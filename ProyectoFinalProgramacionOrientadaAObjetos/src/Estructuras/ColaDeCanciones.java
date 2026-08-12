@@ -5,7 +5,8 @@ import Excepciones.ColaVaciaException;
 import java.util.ArrayList;
 
 public class ColaDeCanciones {
-    private final ArrayList<Cancion> colaCanciones = new ArrayList();
+
+    private final ArrayList<Cancion> colaCanciones = new ArrayList<>();
 
     public ColaDeCanciones() {
     }
@@ -14,11 +15,15 @@ public class ColaDeCanciones {
         this.colaCanciones.add(cancion);
     }
 
+    public void insertarInicio(Cancion cancion) {
+        this.colaCanciones.add(0, cancion);
+    }
+
     public Cancion removerElemento() throws ColaVaciaException {
         if (this.colaCanciones.isEmpty()) {
             throw new ColaVaciaException("La cola de canciones está vacía.");
         } else {
-            Cancion temp = (Cancion)this.colaCanciones.get(0);
+            Cancion temp = this.colaCanciones.get(0);
             this.colaCanciones.remove(0);
             return temp;
         }
@@ -28,7 +33,7 @@ public class ColaDeCanciones {
         if (this.colaCanciones.isEmpty()) {
             throw new ColaVaciaException("La cola de canciones está vacía.");
         } else {
-            return (Cancion)this.colaCanciones.get(0);
+            return this.colaCanciones.get(0);
         }
     }
 
