@@ -48,6 +48,16 @@ public class AdministradorDAO {
         String sql = "DELETE FROM CUENTA WHERE id_cuenta = ?";
         db.ejecutarUpdate(sql, idCuenta);
     }
+    public static boolean hayAdministradorRegistrado() throws SQLException {
+        String sql = "SELECT COUNT(*) AS cantidad FROM ADMINISTRADOR";
+        ResultSet resultado = db.ejecutarQuery(sql);
+
+        if (resultado.next()) {
+            return resultado.getInt("cantidad") > 0;
+        }
+
+        return false;
+    }
 
     private static Administador convertirAdministrador(ResultSet resultado) throws SQLException {
         int idCuenta = resultado.getInt("id_cuenta");

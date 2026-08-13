@@ -10,11 +10,11 @@ public class Login {
     private Login() {
     }
 
-    public static void iniciarSesion(String correoElectronico, String contrasena) throws Exception {
-        Cuenta cuenta = GestorCuenta.buscarPorCorreoElectronico(correoElectronico);
+    public static void iniciarSesion(String nombreUsuario, String contrasena) throws Exception {
+        Cuenta cuenta = GestorCuenta.buscarPorNombreUsuario(nombreUsuario);
 
         if (cuenta == null || !cuenta.getContrasena().equals(contrasena)) {
-            throw new CredencialesInvalidasException("El correo electrónico o la contraseña son incorrectos.");
+            throw new CredencialesInvalidasException("El nombre de usuario o la contraseña son incorrectos.");
         }
 
         String tipoCuenta = GestorCuenta.obtenerTipoCuenta(cuenta.getIdCuenta());

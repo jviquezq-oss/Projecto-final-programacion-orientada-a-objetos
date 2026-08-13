@@ -44,4 +44,7 @@ public class GestorAdministrador {
 
         AdministradorDAO.eliminar(idCuenta);
     }
+    public static boolean hayAdministradorRegistrado() throws Exception {
+        return AdministradorDAO.hayAdministradorRegistrado();
+    }
 }

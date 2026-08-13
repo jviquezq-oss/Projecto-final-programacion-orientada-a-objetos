@@ -25,8 +25,12 @@ public class Controlador {
     public static void iniciarAplicacion() {
         boolean continuar = true;
 
-        while (continuar) {
-            try {
+        try {
+            while (!GestorAdministrador.hayAdministradorRegistrado()) {
+                registrarAdministradorInicial();
+            }
+
+            while (continuar) {
                 int opcion = Menu.mostrarMenuInicio();
 
                 switch (opcion) {
@@ -40,7 +44,6 @@ public class Controlador {
 
                     case 0:
                         continuar = false;
-                        SesionUsuario.cerrarSesion();
                         System.out.println("Aplicación finalizada.");
                         break;
 
@@ -48,12 +51,10 @@ public class Controlador {
                         System.out.println("Opción inválida.");
                         break;
                 }
-
-            } catch (IOException e) {
-                System.out.println("Error al leer la opción.");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
     public static void iniciarSesion() {
@@ -62,10 +63,20 @@ public class Controlador {
         for (int intento = 1; intento <= 3; intento++) {
             try {
                 System.out.print("Nombre de usuario: ");
-                String nombreUsuario = validarParametro(reader.readLine(), "nombre de usuario");
+                String nombreUsuario = reader.readLine().trim();
+
+                if (nombreUsuario.isEmpty()) {
+                    System.out.println("El nombre de usuario es obligatorio.");
+                    continue;
+                }
 
                 System.out.print("Contraseña: ");
-                String contrasena = validarParametro(reader.readLine(), "contraseña");
+                String contrasena = reader.readLine();
+
+                if (contrasena == null || contrasena.isEmpty()) {
+                    System.out.println("La contraseña es obligatoria.");
+                    continue;
+                }
 
                 Login.iniciarSesion(nombreUsuario, contrasena);
 
@@ -100,6 +111,29 @@ public class Controlador {
         }
 
         System.out.println("Se agotaron los 3 intentos de inicio de sesión.");
+    }
+    //Registrar Administrador
+    private static void registrarAdministradorInicial() {
+        try {
+            System.out.println("\n===== REGISTRO DEL ADMINISTRADOR =====");
+
+            System.out.print("Nombre de usuario: ");
+            String nombreUsuario = validarParametro(reader.readLine(), "nombre de usuario");
+
+            System.out.print("Correo electrónico: ");
+            String correoElectronico = validarParametro(reader.readLine(), "correo electrónico");
+
+            System.out.print("Contraseña: ");
+            String contrasena = reader.readLine();
+
+            GestorAdministrador.registrarAdministrador(correoElectronico, contrasena, nombreUsuario);
+
+            System.out.println("Administrador registrado correctamente.");
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Debe registrar un administrador para poder continuar.");
+        }
     }
     public static void menuAdministrador() {
         boolean continuar = true;
@@ -1119,49 +1153,118 @@ public class Controlador {
         boolean continuar = true;
 
         while (continuar) {
-            int opcion = MenuUsuario.mostrarMenuPrincipal();
+            try {
+                int opcion = MenuUsuario.mostrarMenuPrincipal();
+
+                switch (opcion) {
+                    case 1:
+                        mostrarColeccionComprada();
+                        break;
+
+                    case 2:
+                        buscarCancionEnColeccion();
+                        break;
+
+                    case 3:
+                        comprarCancion();
+                        break;
+
+                    case 4:
+                        calificarCancion();
+                        break;
+
+                    case 5:
+                        administrarListasUsuario();
+                        break;
+
+                    case 6:
+                        administrarReproductor();
+                        break;
+
+                    case 7:
+                        reproducirLista();
+                        break;
+
+                    case 8:
+                        mostrarTop3();
+                        break;
+
+                    case 9:
+                        cambiarContrasena();
+                        break;
+
+                    case 0:
+                        SesionUsuario.cerrarSesion();
+                        continuar = false;
+                        break;
+
+                    default:
+                        System.out.println("Opción inválida.");
+                        break;
+                }
+
+            } catch (IOException e) {
+                System.out.println("Error al leer la opción. Intente nuevamente.");
+            }
+        }
+    }
+    //Metodos de estadistica
+    public static void mostrarTop3() {
+        try {
+            List<Cancion> mejoresCalificadas = GestorEstadisticas.obtenerTop3MejorCalificadas();
+            List<Cancion> masCompradas = GestorEstadisticas.obtenerTop3MasCompradas();
+            List<Cancion> masIncluidas = GestorEstadisticas.obtenerTop3MasIncluidasEnListas();
+
+            MenuUsuario.mostrarTop3(mejoresCalificadas, masCompradas, masIncluidas);
+
+            String respuesta = MenuUsuario.solicitarReproduccionTop3();
+
+            if (!respuesta.equalsIgnoreCase("S") && !respuesta.equalsIgnoreCase("N")) {
+                System.out.println("Seleccione S o N.");
+                return;
+            }
+
+            if (respuesta.equalsIgnoreCase("N")) {
+                return;
+            }
+
+            int opcion = MenuUsuario.seleccionarTop3();
+            List<Cancion> cancionesSeleccionadas;
 
             switch (opcion) {
                 case 1:
-                    mostrarColeccionComprada();
+                    cancionesSeleccionadas = mejoresCalificadas;
                     break;
 
                 case 2:
-                    buscarCancionEnColeccion();
+                    cancionesSeleccionadas = masCompradas;
                     break;
 
                 case 3:
-                    comprarCancion();
+                    cancionesSeleccionadas = masIncluidas;
                     break;
 
-                case 4:
-                    calificarCancion();
-                    break;
-
-                case 5:
-                    administrarListasUsuario();
-                    break;
-
-                case 6:
-                    administrarReproductor();
-                    break;
-
-                case 7:
-                    reproducirLista();
-                    break;
-                case 8:
-                    cambiarContrasena();
-                    break;
                 case 0:
-                    SesionUsuario.cerrarSesion();
-                    continuar = false;
-                    break;
+                    return;
 
                 default:
-                    System.out.println("Opción inválida.");
-                    break;
+                    System.out.println("Seleccione una opción válida.");
+                    return;
             }
 
+            Reproductor reproductor = SesionUsuario.getReproductor();
+            reproductor.limpiarCola();
+
+            for (Cancion cancion : cancionesSeleccionadas) {
+                reproductor.agregarCancion(cancion);
+            }
+
+            System.out.println("\nTop 3 cargado correctamente.");
+            reproductor.reproducir();
+            administrarReproductor();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
     // Adminsitra menu listas

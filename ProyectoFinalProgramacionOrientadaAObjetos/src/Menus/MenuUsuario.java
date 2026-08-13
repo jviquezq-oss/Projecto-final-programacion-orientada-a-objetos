@@ -134,7 +134,7 @@ public class MenuUsuario extends Menu{
             return 0;
         }
     }
-    public static int mostrarMenuPrincipal() {
+    public static int mostrarMenuPrincipal() throws IOException {
         System.out.println("\n===== MENÚ PRINCIPAL =====");
         System.out.println("1. Ver colección de canciones");
         System.out.println("2. Buscar canción");
@@ -143,15 +143,12 @@ public class MenuUsuario extends Menu{
         System.out.println("5. Administrar listas de reproducción");
         System.out.println("6. Administrar reproductor");
         System.out.println("7. Reproducir lista de reproducción");
-        System.out.println("8. Cambiar contraseña");
+        System.out.println("8. Ver Top 3");
+        System.out.println("9. Cambiar contraseña");
         System.out.println("0. Cerrar sesión");
+        System.out.print("Seleccione una opción: ");
 
-        try {
-            return Controlador.validarEntero(reader.readLine(), "opción");
-        } catch (IOException | ParametroInvalidoException e) {
-            System.out.println(e.getMessage());
-            return 0;
-        }
+        return Controlador.validarEntero(reader.readLine(), "opción");
     }
     public static int menuListasReproduccion() {
         System.out.println("\n===== LISTAS DE REPRODUCCIÓN =====");
@@ -206,5 +203,51 @@ public class MenuUsuario extends Menu{
             System.out.println("Calificación: " + lista.getCalificacion());
             System.out.println("----------------------------------------");
         }
+    }
+    public static String solicitarReproduccionTop3() throws IOException {
+        System.out.print("\n¿Desea reproducir uno de los Top 3? (S/N): ");
+        return reader.readLine();
+    }
+    public static int seleccionarTop3() throws IOException {
+        System.out.println("\n===== REPRODUCIR TOP 3 =====");
+        System.out.println("1. Top 3 mejores calificaciones");
+        System.out.println("2. Top 3 más compradas");
+        System.out.println("3. Top 3 más incluidas en listas");
+        System.out.println("0. Regresar");
+        System.out.print("Seleccione una opción: ");
+
+        return Controlador.validarEntero(reader.readLine(), "opción");
+    }
+    private static void mostrarRanking(List<Cancion> canciones, boolean mostrarCalificacion) {
+        if (canciones == null || canciones.isEmpty()) {
+            System.out.println("No hay canciones disponibles.");
+            return;
+        }
+
+        for (int i = 0; i < canciones.size(); i++) {
+            Cancion cancion = canciones.get(i);
+
+            if (mostrarCalificacion) {
+                System.out.println((i + 1) + ". " + cancion.getNombre() + " - " + cancion.getArtista() + " - Calificación: " + cancion.getCalificacion());
+            } else {
+                System.out.println((i + 1) + ". " + cancion.getNombre() + " - " + cancion.getArtista());
+            }
+        }
+    }
+    public static List<Cancion> mostrarTop3(
+            List<Cancion> mejoresCalificadas,
+            List<Cancion> masCompradas,
+            List<Cancion> masIncluidas) {
+
+        System.out.println("\n===== TOP 3 - MEJORES CALIFICACIONES =====");
+        mostrarRanking(mejoresCalificadas, true);
+
+        System.out.println("\n===== TOP 3 - MÁS COMPRADAS =====");
+        mostrarRanking(masCompradas, false);
+
+        System.out.println("\n===== TOP 3 - MÁS INCLUIDAS EN LISTAS =====");
+        mostrarRanking(masIncluidas, false);
+
+        return null;
     }
 }
