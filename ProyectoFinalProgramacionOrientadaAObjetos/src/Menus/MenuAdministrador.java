@@ -1,13 +1,8 @@
 package Menus;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import Controlador.Controlador;
 
-public class MenuAdministrador {
-
-    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
+public class MenuAdministrador extends Menu {
     private MenuAdministrador() {
     }
 
@@ -24,14 +19,7 @@ public class MenuAdministrador {
         System.out.println("========================================");
         System.out.print("Seleccione una opción: ");
 
-        String entrada = reader.readLine();
-
-        try {
-            return Integer.parseInt(entrada);
-        } catch (NumberFormatException e) {
-            System.out.println("Debe ingresar un número valido.");
-            return -1;
-        }
+        return Controlador.validarEntero(reader.readLine(),"opcion");
     }
     public static int menuCanciones() throws IOException {
         System.out.println("\n========================================");
@@ -45,13 +33,29 @@ public class MenuAdministrador {
         System.out.println("========================================");
         System.out.print("Seleccione una opción: ");
 
-        String entrada = reader.readLine();
+      return Controlador.validarEntero(reader.readLine(),"opcion");
+    }
+    public static int administrarUsuarios() throws IOException {
+        System.out.println("\n===== ADMINISTRAR USUARIOS =====");
+        System.out.println("1. Ver usuarios");
+        System.out.println("2. Buscar usuario");
+        System.out.println("3. Modificar usuario");
+        System.out.println("4. Eliminar usuario");
+        System.out.println("5. Agregar saldo");
+        System.out.println("6. Crear usuario");
+        System.out.println("7. Cambiar contraseña");
+        System.out.println("8. Regresar");
+        System.out.print("Seleccione una opción: ");
 
-        try {
-            return Integer.parseInt(entrada);
-        } catch (NumberFormatException e) {
-            System.out.println("Debe ingresar un número entero.");
-            return -1;
-        }
+        return Controlador.validarEntero(reader.readLine(), "opción");
+    }
+    public static int seleccionarUsuario() throws IOException {
+        System.out.println("\n===== SELECCIONAR USUARIO =====");
+        System.out.println("1. Buscar por ID");
+        System.out.println("2. Buscar por nombre de usuario");
+        System.out.println("0. Regresar");
+        System.out.print("Seleccione una opción: ");
+
+        return Controlador.validarEntero(reader.readLine(), "opción");
     }
 }

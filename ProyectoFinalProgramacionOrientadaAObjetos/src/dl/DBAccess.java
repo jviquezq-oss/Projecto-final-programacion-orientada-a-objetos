@@ -59,6 +59,17 @@ public class DBAccess {
 
         return preparedStatement.executeQuery();
     }
+    public ResultSet ejecutarQuery(String pQuery, Object... valores) throws SQLException {
+
+        preparedStatement = connection.prepareStatement(pQuery);
+
+        for (int i = 0; i < valores.length; i++) {
+            preparedStatement.setObject(i + 1, valores[i]);
+        }
+
+        return preparedStatement.executeQuery();
+    }
+
     public int ejecutarUpdate(String pQuery, Object... valores) throws SQLException {
 
         preparedStatement = connection.prepareStatement(pQuery);

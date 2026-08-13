@@ -74,7 +74,19 @@ public class CancionDAO {
 
         return canciones;
     }
+    public static List<Cancion> buscarGeneral(String criterio) throws SQLException {
+        String sql = "SELECT * FROM CANCION WHERE nombre LIKE ? OR genero LIKE ? OR artista LIKE ?";
+        String parametro = "%" + criterio + "%";
 
+        ResultSet resultado = db.ejecutarQuery(sql, parametro, parametro, parametro);
+        List<Cancion> canciones = new ArrayList<>();
+
+        while (resultado.next()) {
+            canciones.add(convertirCancion(resultado));
+        }
+
+        return canciones;
+    }
     public static List<Cancion> obtenerTodas() throws SQLException {
         String sql = "SELECT * FROM CANCION";
         ResultSet resultado = db.ejecutarQuery(sql);

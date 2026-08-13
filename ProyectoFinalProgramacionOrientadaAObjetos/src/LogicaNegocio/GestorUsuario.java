@@ -4,17 +4,30 @@ import DAO.CancionDAO;
 import DAO.CompraDAO;
 import DAO.UsuarioDAO;
 import Entidades.Cancion;
+import Entidades.Cuenta;
 import Entidades.Usuario;
 import java.time.LocalDate;
 import java.util.List;
 
 public class GestorUsuario {
 
-    public static Usuario registrarUsuario(String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correoElectronico, String contrasena, double saldo) throws Exception {
-        Usuario nuevoUsuario = new Usuario(0, nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena, saldo);
+    public static Usuario registrarUsuario(String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correoElectronico, String contrasena) throws Exception {
+        Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
+
+        Usuario nuevoUsuario = new Usuario(nuevaCuenta.getIdCuenta(), nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena);
+
         return UsuarioDAO.insertar(nuevoUsuario);
     }
-
+    public static List<Usuario> obtenerTodos() throws Exception {
+        return UsuarioDAO.listarTodos();
+    }
+    public static Usuario buscarPorNombreUsuario(String nombreUsuario   ) throws Exception {
+        Cuenta cuentaDeUsuario = GestorCuenta.buscarPorNombreUsuario(nombreUsuario);
+        if(cuentaDeUsuario == null){
+            throw new Exception("El usuario no fue econtrado");
+        }
+        return buscarPorId(cuentaDeUsuario.getIdCuenta());
+    }
     public static Usuario buscarPorId(int idCuenta) throws Exception {
         Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
@@ -25,7 +38,7 @@ public class GestorUsuario {
         return usuario;
     }
 
-    public static void actualizarUsuario(int idCuenta, String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, double saldo) throws Exception {
+    public static void actualizarUsuario(int idCuenta, String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar) throws Exception {
         Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
         if (usuario == null) {
@@ -37,7 +50,6 @@ public class GestorUsuario {
         usuario.setNacionalidad(nacionalidad);
         usuario.setCedula(cedula);
         usuario.setAvatar(avatar);
-        usuario.setSaldo(saldo);
 
         UsuarioDAO.actualizar(usuario);
     }

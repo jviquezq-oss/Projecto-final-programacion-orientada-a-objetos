@@ -21,6 +21,15 @@ public class GestorCuenta {
     public static Cuenta buscarPorId(int idCuenta) throws Exception {
         return CuentaDAO.buscarPorId(idCuenta);
     }
+    public static void actualizarContrasena(int idCuenta, String contrasena) throws Exception {
+        Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);
+
+        if (cuenta == null) {
+            throw new Exception("La cuenta no existe.");
+        }
+
+        CuentaDAO.actualizarContrasena(idCuenta, contrasena);
+    }
 
     public static void cambiarContrasena(int idCuenta, String contrasenaActual, String nuevaContrasena, String confirmacion) throws Exception {
         Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);

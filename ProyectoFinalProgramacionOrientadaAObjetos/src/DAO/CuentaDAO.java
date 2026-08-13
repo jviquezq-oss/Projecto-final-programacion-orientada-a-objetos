@@ -96,6 +96,11 @@ public class CuentaDAO {
 
         return null;
     }
+    public static void actualizarContrasena(int idCuenta, String contrasena) throws SQLException {
+        String sql = "UPDATE CUENTA SET contrasena = ? WHERE id_cuenta = ?";
+
+        db.ejecutarUpdate(sql, contrasena, idCuenta);
+    }
 
     private static Cuenta convertirCuenta(ResultSet resultado) throws SQLException {
 

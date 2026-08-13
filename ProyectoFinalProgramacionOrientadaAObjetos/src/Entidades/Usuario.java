@@ -19,10 +19,6 @@ public class Usuario extends Cuenta {
     private final ColaDeCanciones colaReproduccion;
 
     public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena) {
-        this(nombrCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreDeUsuario, correoElectronico, contrasena, BONO_BIENVENIDA);
-    }
-
-    public Usuario(String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena, double saldoInicial) {
         super(correoElectronico, contrasena, nombreDeUsuario);
         this.nombrCompleto = nombrCompleto;
         this.fechaDeNacimiento = fechaDeNacimiento;
@@ -31,7 +27,7 @@ public class Usuario extends Cuenta {
         this.avatar = (avatar == null || avatar.isBlank())
                 ? AVATAR_PREDETERMINADO
                 : avatar;
-        this.saldo = saldoInicial;
+        this.saldo = BONO_BIENVENIDA;
         this.colaReproduccion = new ColaDeCanciones();
     }
 
@@ -47,6 +43,7 @@ public class Usuario extends Cuenta {
         this.saldo = saldoInicial;
         this.colaReproduccion = new ColaDeCanciones();
     }
+
     public Usuario(int idCuenta, String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, double saldoInicial) {
         super(idCuenta, correoElectronico, nombreDeUsuario);
         this.nombrCompleto = nombrCompleto;
@@ -57,6 +54,19 @@ public class Usuario extends Cuenta {
                 ? AVATAR_PREDETERMINADO
                 : avatar;
         this.saldo = saldoInicial;
+        this.colaReproduccion = new ColaDeCanciones();
+    }
+
+    public Usuario(int idCuenta, String nombrCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreDeUsuario, String correoElectronico, String contrasena) {
+        super(idCuenta, correoElectronico, contrasena, nombreDeUsuario);
+        this.nombrCompleto = nombrCompleto;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.cedula = cedula;
+        this.avatar = (avatar == null || avatar.isBlank())
+                ? AVATAR_PREDETERMINADO
+                : avatar;
+        this.saldo = BONO_BIENVENIDA;
         this.colaReproduccion = new ColaDeCanciones();
     }
 
@@ -119,6 +129,7 @@ public class Usuario extends Cuenta {
         }
         setSaldo(this.saldo + cantidad);
     }
+
     public ColaDeCanciones getColaReproduccion() {
         return colaReproduccion;
     }
@@ -142,14 +153,14 @@ public class Usuario extends Cuenta {
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "idCuenta=" + getIdCuenta() +
-                ", nombrCompleto='" + nombrCompleto + '\'' +
-                ", fechaDeNacimiento=" + fechaDeNacimiento +
-                ", nacionalidad='" + nacionalidad + '\'' +
-                ", cedula='" + cedula + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", saldo=" + saldo +
-                '}';
+        return "\nID de cuenta: " + getIdCuenta() +
+                "\nNombre completo: " + nombrCompleto +
+                "\nNombre de usuario: " + getNombreUsuario() +
+                "\nCorreo electrónico: " + getCorreoElectronico() +
+                "\nFecha de nacimiento: " + fechaDeNacimiento +
+                "\nNacionalidad: " + nacionalidad +
+                "\nCédula: " + cedula +
+                "\nAvatar: " + avatar +
+                "\nSaldo: $" + String.format("%.2f", saldo);
     }
 }

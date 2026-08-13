@@ -6,6 +6,8 @@ import dl.DBAccess;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDAO {
 
@@ -33,10 +35,21 @@ public class UsuarioDAO {
         }
         return null;
     }
+    public static List<Usuario> listarTodos() throws SQLException {
+        String sql = "SELECT CUENTA.id_cuenta, CUENTA.correo_electronico, CUENTA.contrasena, CUENTA.nombre_usuario, USUARIO.nombre_completo, USUARIO.fecha_nacimiento, USUARIO.nacionalidad, USUARIO.cedula, USUARIO.avatar, USUARIO.saldo FROM CUENTA INNER JOIN USUARIO ON CUENTA.id_cuenta = USUARIO.id_cuenta ORDER BY USUARIO.id_cuenta";
 
+        ResultSet resultado = db.ejecutarQuery(sql);
+        List<Usuario> usuarios = new ArrayList<>();
+
+        while (resultado.next()) {
+            usuarios.add(convertirUsuario(resultado));
+        }
+
+        return usuarios;
+    }
     public static void actualizar(Usuario usuario) throws SQLException {
-        String sql = "UPDATE USUARIO SET nombre_completo = ?, fecha_nacimiento = ?, nacionalidad = ?, cedula = ?, avatar = ?, saldo = ? WHERE id_cuenta = ?";
-        db.ejecutarUpdate(sql, usuario.getNombrCompleto(), usuario.getFechaDeNacimiento(), usuario.getNacionalidad(), usuario.getCedula(), usuario.getAvatar(), usuario.getSaldo(), usuario.getIdCuenta());
+        String sql = "UPDATE USUARIO SET nombre_completo = ?, fecha_nacimiento = ?, nacionalidad = ?, cedula = ?, avatar = ? WHERE id_cuenta = ?";
+        db.ejecutarUpdate(sql, usuario.getNombrCompleto(), usuario.getFechaDeNacimiento(), usuario.getNacionalidad(), usuario.getCedula(), usuario.getAvatar(), usuario.getIdCuenta());
     }
 
     public static void eliminar(int idCuenta) throws SQLException {

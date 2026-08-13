@@ -2,6 +2,9 @@ package LogicaNegocio;
 
 import DAO.CancionDAO;
 import Entidades.Cancion;
+import Excepciones.CancionNoEncontradaException;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,11 +15,11 @@ public class GestorCancion {
         return CancionDAO.insertar(nuevaCancion);
     }
 
-    public static Cancion buscarPorId(int idCancion) throws Exception {
+    public static Cancion buscarPorId(int idCancion) throws SQLException, CancionNoEncontradaException {
         Cancion cancion = CancionDAO.buscarPorId(idCancion);
 
         if (cancion == null) {
-            throw new Exception("La canción no existe.");
+            throw new CancionNoEncontradaException("La canción no existe.");
         }
 
         return cancion;
@@ -32,6 +35,10 @@ public class GestorCancion {
 
     public static List<Cancion> buscarPorArtista(String artista) throws Exception {
         return CancionDAO.buscarPorArtista(artista);
+    }
+
+    public static List<Cancion> buscarGeneral(String criterio) throws Exception {
+        return CancionDAO.buscarGeneral(criterio);
     }
 
     public static List<Cancion> obtenerTodas() throws Exception {
