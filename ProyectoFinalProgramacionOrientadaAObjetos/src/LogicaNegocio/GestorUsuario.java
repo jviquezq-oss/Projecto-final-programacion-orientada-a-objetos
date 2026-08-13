@@ -6,6 +6,8 @@ import DAO.UsuarioDAO;
 import Entidades.Cancion;
 import Entidades.Cuenta;
 import Entidades.Usuario;
+import Excepciones.ParametroInvalidoException;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,7 +15,9 @@ public class GestorUsuario {
 
     public static Usuario registrarUsuario(String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correoElectronico, String contrasena) throws Exception {
         Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
-
+        if(!Usuario.esMayorDeEdad(fechaDeNacimiento)){
+            throw new ParametroInvalidoException("El usuario es menor de edad");
+        }
         Usuario nuevoUsuario = new Usuario(nuevaCuenta.getIdCuenta(), nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena);
 
         return UsuarioDAO.insertar(nuevoUsuario);

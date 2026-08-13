@@ -31,13 +31,13 @@ public class ListaRepoduccionDAO {
     }
 
     public static ListaRepoduccion buscarPorId(int idLista) throws SQLException {
-        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion FROM LISTA_REPRODUCCION WHERE id_lista = ?";
+        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion, calificacion FROM LISTA_REPRODUCCION WHERE id_lista = ?";
         ResultSet resultado = db.ejecutarQuery(sql, idLista);
         return null;
     }
 
     public static List<ListaRepoduccion> obtenerPorUsuario(Usuario usuario) throws SQLException {
-        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion FROM LISTA_REPRODUCCION WHERE id_usuario = ?";
+        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion, calificacion FROM LISTA_REPRODUCCION WHERE id_usuario = ?";
         ResultSet resultado = db.ejecutarQuery(sql, usuario.getIdCuenta());
         List<ListaRepoduccion> listas = new ArrayList<>();
 
@@ -107,12 +107,17 @@ public class ListaRepoduccionDAO {
 
         return listas;
     }
+    public static void actualizarCalificacion(int idLista, double calificacion) throws SQLException {
+        String sql = "UPDATE LISTA_REPRODUCCION SET calificacion = ? WHERE id_lista = ?";
+        db.ejecutarUpdate(sql, calificacion, idLista);
+    }
     private static ListaRepoduccion convertirLista(ResultSet resultado, Usuario usuario) throws SQLException {
         int idLista = resultado.getInt("id_lista");
         String nombre = resultado.getString("nombre");
         java.sql.Date fecha = resultado.getDate("fecha_creacion");
         LocalDate fechaCreacion = fecha != null ? fecha.toLocalDate() : null;
-        return new ListaRepoduccion(idLista, usuario, nombre, fechaCreacion);
+        double calificaion = resultado.getDouble("calificacion");
+        return new ListaRepoduccion(idLista, usuario, nombre, fechaCreacion,calificaion);
     }
 
     private static Cancion convertirCancion(ResultSet resultado) throws SQLException {
@@ -150,7 +155,8 @@ public class ListaRepoduccionDAO {
         String nombre = resultado.getString("nombre");
         java.sql.Date fechaCreacionSql = resultado.getDate("fecha_creacion");
         LocalDate fechaCreacion = fechaCreacionSql != null ? fechaCreacionSql.toLocalDate() : null;
+        double calificaion = resultado.getDouble("calificacion");
 
-        return new ListaRepoduccion(idLista, usuario, nombre, fechaCreacion);
+        return new ListaRepoduccion(idLista, usuario, nombre, fechaCreacion,calificaion);
     }
 }

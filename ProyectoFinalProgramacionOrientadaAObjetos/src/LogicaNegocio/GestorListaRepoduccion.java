@@ -14,7 +14,7 @@ import java.util.List;
 public class GestorListaRepoduccion {
 
     public static ListaRepoduccion registrarLista(Usuario usuario, String nombre, LocalDate fechaCreacion) throws Exception {
-        ListaRepoduccion nuevaLista = new ListaRepoduccion(0, usuario, nombre, fechaCreacion);
+        ListaRepoduccion nuevaLista = new ListaRepoduccion(0, usuario, nombre, fechaCreacion,0.0);
         return ListaRepoduccionDAO.insertar(nuevaLista);
     }
 
@@ -95,5 +95,23 @@ public class GestorListaRepoduccion {
         }
 
         return ListaRepoduccionDAO.obtenerCanciones(idLista);
+    }
+    public static void recalcularCalificacion(int idLista) throws Exception {
+        ListaRepoduccion lista = ListaRepoduccionDAO.buscarPorId(idLista);
+
+        if (lista == null) {
+            throw new ListaNoEncontrada("La lista de reproducción no existe.");
+        }
+
+        List<Cancion> canciones = GestorListaCancion.obtenerCanciones(idLista);
+        double calificacion = 0.0;
+        if (!canciones.isEmpty()) {
+            double suma = 0.0;
+            for (Cancion cancion : canciones) {
+                suma += cancion.getCalificacion();
+            }
+            calificacion = Math.round((suma / canciones.size()) * 10.0) / 10.0;
+        }
+        ListaRepoduccionDAO.actualizarCalificacion(idLista, calificacion);
     }
 }

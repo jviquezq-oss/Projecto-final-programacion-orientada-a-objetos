@@ -3,9 +3,11 @@ package LogicaNegocio;
 import DAO.CancionDAO;
 import Entidades.Cancion;
 import Excepciones.CancionNoEncontradaException;
+import Excepciones.ParametroInvalidoException;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GestorCancion {
@@ -84,5 +86,29 @@ public class GestorCancion {
 
         cancion.agregarCalificacion(calificacion);
         CancionDAO.agregarCalificacion(idCancion, calificacion);
+    }
+    public static List<Cancion> buscarGeneral(
+            List<Cancion> canciones,
+            String criterio) throws ParametroInvalidoException {
+
+        if (canciones == null) {
+            throw new ParametroInvalidoException(
+                    "La lista de canciones no puede ser nula."
+            );
+        }
+
+        if (criterio == null || criterio.isBlank()) {
+            throw new ParametroInvalidoException(
+                    "El criterio de búsqueda no puede estar vacío."
+            );
+        }
+        List<Cancion> resultados = new ArrayList<>();
+        String criterioNormalizado = criterio.trim().toLowerCase();
+        for (Cancion cancion : canciones) {
+            if (cancion.getNombre().toLowerCase().contains(criterioNormalizado) || cancion.getGenero().toLowerCase().contains(criterioNormalizado) || cancion.getArtista().toLowerCase().contains(criterioNormalizado)) {
+                resultados.add(cancion);
+            }
+        }
+        return resultados;
     }
 }

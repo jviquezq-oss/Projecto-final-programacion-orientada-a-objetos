@@ -8,6 +8,7 @@ public class ListaRepoduccion {
     private Usuario propietario;
     private String nombre;
     private LocalDate fechaCreacion;
+    private double calificacion;
 
     public ListaRepoduccion(Usuario propietario, String nombre, LocalDate fechaCreacion) {
         this.propietario = propietario;
@@ -15,11 +16,12 @@ public class ListaRepoduccion {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public ListaRepoduccion(int idLista, Usuario propietario, String nombre, LocalDate fechaCreacion) {
+    public ListaRepoduccion(int idLista, Usuario propietario, String nombre, LocalDate fechaCreacion,double calificacion) {
         this.idLista = idLista;
         this.propietario = propietario;
         this.nombre = nombre;
         this.fechaCreacion = fechaCreacion;
+        this.calificacion = calificacion;
     }
 
     public int getIdLista() {
@@ -53,7 +55,9 @@ public class ListaRepoduccion {
     public void setFechaCreacion(LocalDate fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
+    public double getCalificacion(){
+        return this.calificacion;
+    }
     @Override
     public String toString() {
         return "ListaRepoduccion{" +
