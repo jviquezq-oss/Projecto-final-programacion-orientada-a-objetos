@@ -30,9 +30,13 @@ public class ListaRepoduccionDAO {
         return lista;
     }
 
-    public static ListaRepoduccion buscarPorId(int idLista) throws SQLException {
+    public static ListaRepoduccion buscarPorId(int idLista, Usuario usuario) throws SQLException {
         String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion, calificacion FROM LISTA_REPRODUCCION WHERE id_lista = ?";
         ResultSet resultado = db.ejecutarQuery(sql, idLista);
+        if (resultado.next()) {
+            return convertirLista(resultado, usuario);
+        }
+
         return null;
     }
 
@@ -86,7 +90,7 @@ public class ListaRepoduccionDAO {
         return canciones;
     }
     public static List<ListaRepoduccion> buscarPorNombre(String nombre, Usuario usuario) throws SQLException {
-        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion FROM LISTA_REPRODUCCION WHERE id_usuario = ? AND nombre LIKE ?";
+        String sql = "SELECT id_lista, id_usuario, nombre, fecha_creacion, calificacion FROM LISTA_REPRODUCCION WHERE id_usuario = ? AND nombre LIKE ?";
         ResultSet resultado = db.ejecutarQuery(sql, usuario.getIdCuenta(), "%" + nombre + "%");
         List<ListaRepoduccion> listas = new ArrayList<>();
 
@@ -97,7 +101,7 @@ public class ListaRepoduccionDAO {
         return listas;
     }
     public static List<ListaRepoduccion> obtenerTodas() throws SQLException {
-        String sql = "SELECT L.id_lista, L.id_usuario, L.nombre, L.fecha_creacion, U.nombre_completo, U.fecha_nacimiento, U.nacionalidad, U.cedula, U.avatar, U.saldo, C.nombre_usuario, C.correo_electronico FROM LISTA_REPRODUCCION L INNER JOIN USUARIO U ON L.id_usuario = U.id_cuenta INNER JOIN CUENTA C ON U.id_cuenta = C.id_cuenta";
+        String sql = "SELECT L.id_lista, L.id_usuario, L.nombre, L.fecha_creacion, L.calificacion, U.nombre_completo, U.fecha_nacimiento, U.nacionalidad, U.cedula, U.avatar, U.saldo, C.nombre_usuario, C.correo_electronico FROM LISTA_REPRODUCCION L INNER JOIN USUARIO U ON L.id_usuario = U.id_cuenta INNER JOIN CUENTA C ON U.id_cuenta = C.id_cuenta";
         ResultSet resultado = db.ejecutarQuery(sql);
         List<ListaRepoduccion> listas = new ArrayList<>();
 
@@ -137,6 +141,17 @@ public class ListaRepoduccionDAO {
 
         return new Cancion(idCancion, nombre, genero, artista, compositor, fechaLanzamiento, album, caratula, sumaCalificaciones, cantidadCalificaciones, precio, duracion);
     }
+    public static List<ListaRepoduccion> buscarPorNombre(String nombre) throws SQLException {
+        String sql = "SELECT L.id_lista, L.id_usuario, L.nombre, L.fecha_creacion, L.calificacion, U.nombre_completo, U.fecha_nacimiento, U.nacionalidad, U.cedula, U.avatar, U.saldo, C.nombre_usuario, C.correo_electronico FROM LISTA_REPRODUCCION L INNER JOIN USUARIO U ON L.id_usuario = U.id_cuenta INNER JOIN CUENTA C ON U.id_cuenta = C.id_cuenta WHERE L.nombre LIKE ?";
+        ResultSet resultado = db.ejecutarQuery(sql, "%" + nombre + "%");
+        List<ListaRepoduccion> listas = new ArrayList<>();
+
+        while (resultado.next()) {
+            listas.add(convertirListaConUsuario(resultado));
+        }
+
+        return listas;
+    }
     private static ListaRepoduccion convertirListaConUsuario(ResultSet resultado) throws SQLException {
         int idCuenta = resultado.getInt("id_usuario");
         String nombreCompleto = resultado.getString("nombre_completo");
@@ -159,4 +174,5 @@ public class ListaRepoduccionDAO {
 
         return new ListaRepoduccion(idLista, usuario, nombre, fechaCreacion,calificaion);
     }
+
 }

@@ -13,11 +13,18 @@ import java.util.List;
 
 public class GestorUsuario {
 
-    public static Usuario registrarUsuario(String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correoElectronico, String contrasena) throws Exception {
-        Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
-        if(!Usuario.esMayorDeEdad(fechaDeNacimiento)){
-            throw new ParametroInvalidoException("El usuario es menor de edad");
+    public static Usuario registrarUsuario(String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar, String nombreUsuario, String correoElectronico, String contrasena, String confirmacionContrasena) throws Exception {
+        if (!Usuario.esMayorDeEdad(fechaDeNacimiento)) {
+            throw new ParametroInvalidoException("El usuario es menor de edad.");
         }
+
+        Cuenta.validarContrasena(contrasena);
+
+        if (!contrasena.equals(confirmacionContrasena)) {
+            throw new ParametroInvalidoException("La contraseña y su confirmación no coinciden.");
+        }
+
+        Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
         Usuario nuevoUsuario = new Usuario(nuevaCuenta.getIdCuenta(), nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena);
 
         return UsuarioDAO.insertar(nuevoUsuario);

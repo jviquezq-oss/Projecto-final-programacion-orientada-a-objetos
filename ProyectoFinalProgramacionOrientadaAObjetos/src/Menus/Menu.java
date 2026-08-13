@@ -129,4 +129,13 @@ public class Menu {
             System.out.println("Seleccione una opción válida.");
         }
     }
+    public static int mostrarMenuInicio() throws IOException {
+        System.out.println("\n===== REPRODUCTOR DE MÚSICA =====");
+        System.out.println("1. Iniciar sesión");
+        System.out.println("2. Crear usuario");
+        System.out.println("0. Salir");
+        System.out.print("Seleccione una opción: ");
+
+        return Controlador.validarEntero(reader.readLine(), "opción");
+    }
 }

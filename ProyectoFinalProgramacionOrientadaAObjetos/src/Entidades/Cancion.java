@@ -154,20 +154,15 @@ public class Cancion {
 
     @Override
     public String toString() {
-        return "Cancion{" +
-                "idCancion=" + this.idCancion +
-                ", nombre='" + this.nombre + '\'' +
-                ", genero='" + this.genero + '\'' +
-                ", artista='" + this.artista + '\'' +
-                ", compositor='" + this.compositor + '\'' +
-                ", fechaLanzamiento=" + this.fechaLanzamiento +
-                ", album='" + this.album + '\'' +
-                ", caratula='" + this.caratula + '\'' +
-                ", sumaCalificaciones=" + this.sumaCalificaciones +
-                ", cantidadCalificaciones=" + this.cantidadCalificaciones +
-                ", calificacion=" + this.getCalificacion() +
-                ", precio=" + this.precio +
-                ", duracion=" + this.duracion +
-                '}';
+        return "ID: " + idCancion +
+                "\nNombre: " + nombre +
+                "\nGénero: " + genero +
+                "\nArtista: " + artista +
+                "\nCompositor: " + compositor +
+                "\nFecha de lanzamiento: " + fechaLanzamiento +
+                "\nÁlbum: " + album +
+                "\nCarátula: " + caratula +
+                "\nPrecio: " + precio +
+                "\nDuración: " + duracion + " segundos";
     }
 }

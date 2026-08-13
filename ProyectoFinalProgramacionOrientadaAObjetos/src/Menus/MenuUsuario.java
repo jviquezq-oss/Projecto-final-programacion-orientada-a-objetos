@@ -2,6 +2,7 @@ package Menus;
 import Controlador.Controlador;
 import Entidades.Cancion;
 import Entidades.ListaRepoduccion;
+import Entidades.Nacionalidad;
 import Excepciones.ParametroInvalidoException;
 
 import java.io.IOException;
@@ -131,6 +132,79 @@ public class MenuUsuario extends Menu{
         } catch (IOException | ParametroInvalidoException e) {
             System.out.println(e.getMessage());
             return 0;
+        }
+    }
+    public static int mostrarMenuPrincipal() {
+        System.out.println("\n===== MENÚ PRINCIPAL =====");
+        System.out.println("1. Ver colección de canciones");
+        System.out.println("2. Buscar canción");
+        System.out.println("3. Comprar canción");
+        System.out.println("4. Calificar canción");
+        System.out.println("5. Administrar listas de reproducción");
+        System.out.println("6. Administrar reproductor");
+        System.out.println("7. Reproducir lista de reproducción");
+        System.out.println("8. Cambiar contraseña");
+        System.out.println("0. Cerrar sesión");
+
+        try {
+            return Controlador.validarEntero(reader.readLine(), "opción");
+        } catch (IOException | ParametroInvalidoException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
+    public static int menuListasReproduccion() {
+        System.out.println("\n===== LISTAS DE REPRODUCCIÓN =====");
+        System.out.println("1. Crear lista");
+        System.out.println("2. Agregar canción a lista");
+        System.out.println("3. Eliminar canción de lista");
+        System.out.println("4. Eliminar lista");
+        System.out.println("0. Regresar");
+
+        try {
+            return Controlador.validarEntero(reader.readLine(), "opción");
+        } catch (IOException | ParametroInvalidoException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
+    public static String solicitarNacionalidad() throws IOException, ParametroInvalidoException {
+        Nacionalidad[] nacionalidades = Nacionalidad.values();
+
+        System.out.println("\n===== NACIONALIDAD =====");
+
+        for (int i = 0; i < nacionalidades.length; i++) {
+            System.out.println((i + 1) + ". " + nacionalidades[i].name().replace("_", " "));
+        }
+
+        System.out.println("0. Regresar");
+
+        int opcion = Controlador.validarEntero(reader.readLine(), "opción");
+
+        if (opcion == 0) {
+            return null;
+        }
+
+        if (opcion < 1 || opcion > nacionalidades.length) {
+            throw new ParametroInvalidoException("Seleccione una nacionalidad válida.");
+        }
+
+        return nacionalidades[opcion - 1].name();
+    }
+    public static void mostrarListasReproduccion(List<ListaRepoduccion> listas) {
+        System.out.println("\n===== MIS LISTAS DE REPRODUCCIÓN =====");
+
+        if (listas == null || listas.isEmpty()) {
+            System.out.println("No tiene listas de reproducción.");
+            return;
+        }
+
+        for (ListaRepoduccion lista : listas) {
+            System.out.println("ID: " + lista.getIdLista());
+            System.out.println("Nombre: " + lista.getNombre());
+            System.out.println("Fecha de creación: " + lista.getFechaCreacion());
+            System.out.println("Calificación: " + lista.getCalificacion());
+            System.out.println("----------------------------------------");
         }
     }
 }
