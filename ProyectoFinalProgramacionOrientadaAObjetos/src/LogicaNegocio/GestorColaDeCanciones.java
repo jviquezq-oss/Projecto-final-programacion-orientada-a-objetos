@@ -47,4 +47,9 @@ public class GestorColaDeCanciones {
     public static void limpiarCola(ColaDeCanciones cola) {
         cola.limpiarCola();
     }
+    public static void cargarCanciones(ColaDeCanciones cola, List<Cancion> canciones) {cola.limpiarCola();
+        for (Cancion cancion : canciones) {
+            cola.insertarElemento(cancion);
+        }
+    }
 }

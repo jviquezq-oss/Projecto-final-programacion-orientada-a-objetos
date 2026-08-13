@@ -514,20 +514,15 @@ public class Controlador {
         try {
             int opcion = MenuAdministrador.seleccionarUsuario();
 
-            switch (opcion) {
-                case 1:
-                    return seleccionarUsuarioPorId();
-
-                case 2:
-                    return seleccionarUsuarioPorNombre();
-
-                case 0:
-                    return null;
-
-                default:
+            return switch (opcion) {
+                case 1 -> seleccionarUsuarioPorId();
+                case 2 -> seleccionarUsuarioPorNombre();
+                case 0 -> null;
+                default -> {
                     System.out.println("Opción inválida.");
-                    return null;
-            }
+                    yield null;
+                }
+            };
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -643,56 +638,58 @@ public class Controlador {
     //Fin de operaciones de usuario
     //Aministracion del reproductor
     public static void administrarReproductor() {
-        int opcion;
+        boolean continuar = true;
 
-        do {
+        while (continuar) {
             try {
-                opcion = Menu.seleccionarReproductor();
+                int opcion = Menu.seleccionarReproductor();
+
+                switch (opcion) {
+                    case 1:
+                        agregarCancionACola();
+                        break;
+
+                    case 2:
+                        reproducirCancion();
+                        break;
+
+                    case 3:
+                        pausarCancion();
+                        break;
+
+                    case 4:
+                        reanudarCancion();
+                        break;
+
+                    case 5:
+                        avanzarCancion();
+                        break;
+
+                    case 6:
+                        retrocederCancion();
+                        break;
+
+                    case 7:
+                        siguienteCancion();
+                        break;
+
+                    case 8:
+                        mostrarEstadoReproduccion();
+                        break;
+
+                    case 9:
+                        continuar = false;
+                        break;
+
+                    default:
+                        System.out.println("Opción inválida.");
+                        break;
+                }
+
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Error al leer la opción. Intente nuevamente.");
             }
-
-            switch (opcion) {
-                case 1:
-                    agregarCancionACola();
-                    break;
-
-                case 2:
-                    reproducirCancion();
-                    break;
-
-                case 3:
-                    pausarCancion();
-                    break;
-
-                case 4:
-                    reanudarCancion();
-                    break;
-
-                case 5:
-                    avanzarCancion();
-                    break;
-
-                case 6:
-                    retrocederCancion();
-                    break;
-
-                case 7:
-                    siguienteCancion();
-                    break;
-
-                case 8:
-                    mostrarEstadoReproduccion();
-                    break;
-
-                case 9:
-                    break;
-
-                default:
-                    System.out.println("Opción inválida.");
-            }
-
-        } while (opcion != 9);
+        }
     }
     //Operaciones del reproductor
     public static void agregarCancionACola() {
@@ -866,17 +863,21 @@ public class Controlador {
     // Crear listas de reproduccion
     public static void crearListaReproduccion() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
+            }
 
             System.out.println("\n===== CREAR LISTA DE REPRODUCCIÓN =====");
-
             System.out.print("Ingrese el nombre de la lista: ");
-            String nombre = validarParametro(reader.readLine(), "nombre de la lista"
-            );
+            String nombre = validarParametro(reader.readLine(), "nombre de la lista");
 
-            ListaRepoduccion lista = GestorListaRepoduccion.registrarLista((Usuario) cuenta, nombre, LocalDate.now());
+            ListaRepoduccion lista = GestorListaRepoduccion.registrarLista(usuario, nombre, LocalDate.now());
+
             System.out.println("Lista de reproducción creada correctamente.");
             System.out.println("ID de la lista: " + lista.getIdLista());
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -921,6 +922,12 @@ public class Controlador {
     public static void calificarCancion() {
         try {
             Cuenta cuenta = SesionUsuario.getCuentaActiva();
+
+            if (!(cuenta instanceof Usuario)) {
+                System.out.println("Esta operación solo está disponible para usuarios.");
+                return;
+            }
+
             List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
             Cancion cancion = seleccionarCancion(catalogo);
 
@@ -946,9 +953,14 @@ public class Controlador {
     // agregacion de cancion a una playlist
     public static void agregarCancionALista() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-            Usuario usuario = (Usuario) cuenta;
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
+            }
+
             ListaRepoduccion lista = seleccionarListaReproduccion(usuario);
+
             if (lista == null) {
                 return;
             }
@@ -956,17 +968,17 @@ public class Controlador {
             boolean continuar = true;
 
             while (continuar) {
-                List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
+                List<Cancion> catalogo = obtenerCatalogoDisponible(usuario);
                 Cancion cancion = seleccionarCancion(catalogo);
 
                 if (cancion == null) {
                     return;
                 }
 
-                GestorListaCancion.agregarCancion(lista.getIdLista(), cancion.getIdCancion(),usuario);
-                GestorListaRepoduccion.recalcularCalificacion(lista.getIdLista(),usuario);
-                System.out.println("La canción fue agregada correctamente a la lista de reproducción.");
+                GestorListaCancion.agregarCancion(lista.getIdLista(), cancion.getIdCancion(), usuario);
+                GestorListaRepoduccion.recalcularCalificacion(lista.getIdLista(), usuario);
 
+                System.out.println("La canción fue agregada correctamente a la lista de reproducción.");
                 continuar = MenuUsuario.solicitarOtraCancion();
             }
 
@@ -977,9 +989,14 @@ public class Controlador {
     // Elminar canciones de lista
     public static void eliminarCancionDeLista() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-            Usuario usuario = (Usuario) cuenta;
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
+            }
+
             ListaRepoduccion lista = seleccionarListaReproduccion(usuario);
+
             if (lista == null) {
                 return;
             }
@@ -987,8 +1004,9 @@ public class Controlador {
             boolean continuar = true;
 
             while (continuar) {
-                List<Cancion> canciones = GestorListaCancion.obtenerCanciones(lista.getIdLista(),usuario);
+                List<Cancion> canciones = GestorListaCancion.obtenerCanciones(lista.getIdLista(), usuario);
                 Cancion cancion = MenuUsuario.solicitarCancionDeLista(canciones);
+
                 if (cancion == null) {
                     return;
                 }
@@ -1002,8 +1020,9 @@ public class Controlador {
                     continue;
                 }
 
-                GestorListaCancion.eliminarCancion(lista.getIdLista(), cancion.getIdCancion(),usuario);
-                GestorListaRepoduccion.recalcularCalificacion(lista.getIdLista(),usuario);
+                GestorListaCancion.eliminarCancion(lista.getIdLista(), cancion.getIdCancion(), usuario);
+                GestorListaRepoduccion.recalcularCalificacion(lista.getIdLista(), usuario);
+
                 System.out.println("La canción fue eliminada correctamente de la lista de reproducción.");
 
                 continuar = MenuUsuario.solicitarOtraCancion();
@@ -1016,8 +1035,12 @@ public class Controlador {
     //Eliminar una lista de reproduccion
     public static void eliminarListaReproduccion() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-            Usuario usuario = (Usuario) cuenta;
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
+            }
+
             ListaRepoduccion lista = seleccionarListaReproduccion(usuario);
 
             if (lista == null) {
@@ -1034,6 +1057,7 @@ public class Controlador {
                 System.out.println("Operación cancelada.");
                 return;
             }
+
             GestorListaRepoduccion.eliminarLista(lista.getIdLista(), usuario);
             System.out.println("La lista de reproducción fue eliminada correctamente.");
 
@@ -1091,7 +1115,7 @@ public class Controlador {
                     System.out.print("Ingrese el nombre de la lista de reproducción: ");
                     String nombre = validarParametro(reader.readLine(), "nombre de la lista");
 
-                    List<ListaRepoduccion> resultados = GestorListaRepoduccion.buscarPorNombre(nombre, null);
+                    List<ListaRepoduccion> resultados = GestorListaRepoduccion.buscarPorNombre(nombre);
 
                     if (resultados.isEmpty()) {
                         System.out.println("No se encontraron listas de reproducción.");
@@ -1252,15 +1276,10 @@ public class Controlador {
                     return;
             }
 
-            Reproductor reproductor = SesionUsuario.getReproductor();
-            reproductor.limpiarCola();
-
-            for (Cancion cancion : cancionesSeleccionadas) {
-                reproductor.agregarCancion(cancion);
-            }
+            GestorColaDeCanciones.cargarCanciones(SesionUsuario.getReproductor().getCola(), cancionesSeleccionadas);
 
             System.out.println("\nTop 3 cargado correctamente.");
-            reproductor.reproducir();
+            SesionUsuario.getReproductor().reproducir();
             administrarReproductor();
 
         } catch (Exception e) {
@@ -1332,15 +1351,15 @@ public class Controlador {
             throw new NumberFormatException("El campo " + nombreParametro + " debe ser un número válido.");
         }
     }
-    private static LocalDate validarFecha (String parametro, String nombreParametro) throws ParametroInvalidoException {
+    private static LocalDate validarFecha(String parametro, String nombreParametro) throws ParametroInvalidoException {
         if (parametro == null || parametro.isBlank()) {
             throw new ParametroInvalidoException("El campo " + nombreParametro + " no puede estar vacío.");
         }
 
         try {
             return LocalDate.parse(parametro);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("El campo " + nombreParametro + " debe ser un número válido.");
+        } catch (DateTimeParseException e) {
+            throw new ParametroInvalidoException("El campo " + nombreParametro + " debe tener el formato YYYY-MM-DD.");
         }
     }
     private static String obtenerNuevoParametro(String valorActual, String nombreParametro) throws IOException {
@@ -1408,6 +1427,16 @@ public class Controlador {
         }
 
         return null;
+    }
+    private static Usuario obtenerUsuarioActivo() {
+        Cuenta cuenta = SesionUsuario.getCuentaActiva();
+
+        if (!(cuenta instanceof Usuario)) {
+            System.out.println("Esta operación solo está disponible para usuarios.");
+            return null;
+        }
+
+        return (Usuario) cuenta;
     }
     //Auxiliares compra
     private static void previsualizarCancion(Cancion cancion) {
