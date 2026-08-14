@@ -1,0 +1,107 @@
+CREATE DATABASE IF NOT EXISTS ProjectoFinalProgramacionOrientadaAObjetos;
+USE ProjectoFinalProgramacionOrientadaAObjetos;
+
+
+CREATE TABLE CANCION (
+    id_cancion INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    genero VARCHAR(100) NOT NULL,
+    artista VARCHAR(150) NOT NULL,
+    compositor VARCHAR(150) NOT NULL,
+    fecha_lanzamiento DATE NOT NULL,
+    album VARCHAR(150) NOT NULL,
+    caratula VARCHAR(500),
+    suma_calificaciones DECIMAL(10,1) NOT NULL DEFAULT 0.0,
+    cantidad_calificaciones INT NOT NULL DEFAULT 0,
+    precio DECIMAL(10,2) NOT NULL,
+    duracion INT NOT NULL
+);
+
+
+CREATE TABLE CUENTA (
+    id_cuenta INT AUTO_INCREMENT PRIMARY KEY,
+    correo_electronico VARCHAR(150) NOT NULL UNIQUE,
+    contrasena VARCHAR(255) NOT NULL,
+    nombre_usuario VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE USUARIO (
+    id_cuenta INT PRIMARY KEY,
+    nombre_completo VARCHAR(150) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    nacionalidad VARCHAR(100) NOT NULL,
+    cedula VARCHAR(30) NOT NULL UNIQUE,
+    avatar VARCHAR(500),
+    saldo DECIMAL(10,2) NOT NULL DEFAULT 4.99,
+    CONSTRAINT fk_usuario_cuenta
+        FOREIGN KEY (id_cuenta)
+        REFERENCES CUENTA(id_cuenta)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE ADMINISTRADOR (
+    id_cuenta INT PRIMARY KEY,
+    CONSTRAINT fk_administrador_cuenta
+        FOREIGN KEY (id_cuenta)
+        REFERENCES CUENTA(id_cuenta)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE LISTA_REPRODUCCION (
+    id_lista INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    fecha_creacion DATE NOT NULL,
+    calificacion DECIMAL(10,1) NOT NULL DEFAULT 0.0,
+    CONSTRAINT fk_lista_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES USUARIO(id_cuenta)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE COMPRA (
+    id_usuario INT NOT NULL,
+    id_cancion INT NOT NULL,
+    fecha_compra DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    precio DECIMAL(10,2) NOT NULL,
+
+
+    PRIMARY KEY (id_usuario, id_cancion),
+
+
+    CONSTRAINT fk_compra_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES USUARIO(id_cuenta)
+        ON DELETE CASCADE,
+
+
+    CONSTRAINT fk_compra_cancion
+        FOREIGN KEY (id_cancion)
+        REFERENCES CANCION(id_cancion)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE LISTA_CANCION (
+    id_lista INT NOT NULL,
+    id_cancion INT NOT NULL,
+
+
+    PRIMARY KEY (id_lista, id_cancion),
+
+
+    CONSTRAINT fk_lista_cancion_lista
+        FOREIGN KEY (id_lista)
+        REFERENCES LISTA_REPRODUCCION(id_lista)
+        ON DELETE CASCADE,
+
+
+    CONSTRAINT fk_lista_cancion_cancion
+        FOREIGN KEY (id_cancion)
+        REFERENCES CANCION(id_cancion)
+        ON DELETE CASCADE
+);
