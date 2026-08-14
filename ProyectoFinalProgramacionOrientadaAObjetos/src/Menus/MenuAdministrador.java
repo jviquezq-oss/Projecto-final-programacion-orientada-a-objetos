@@ -1,6 +1,7 @@
 package Menus;
 import java.io.IOException;
 import Controlador.Controlador;
+import util.ValidadorEntrada;
 
 public class MenuAdministrador extends Menu {
     private MenuAdministrador() {
@@ -16,7 +17,7 @@ public class MenuAdministrador extends Menu {
         System.out.println("0. Cerrar sesión");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
     public static int menuCanciones() throws IOException {
         System.out.println("\n========================================");
@@ -30,7 +31,7 @@ public class MenuAdministrador extends Menu {
         System.out.println("========================================");
         System.out.print("Seleccione una opción: ");
 
-      return Controlador.validarEntero(reader.readLine(),"opcion");
+      return ValidadorEntrada.validarEntero(reader.readLine(),"opcion");
     }
     public static int administrarUsuarios() throws IOException {
         System.out.println("\n===== ADMINISTRAR USUARIOS =====");
@@ -42,7 +43,7 @@ public class MenuAdministrador extends Menu {
         System.out.println("0. Regresar");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
     public static int seleccionarUsuario() throws IOException {
         System.out.println("\n===== SELECCIONAR USUARIO =====");
@@ -51,6 +52,6 @@ public class MenuAdministrador extends Menu {
         System.out.println("0. Regresar");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
 }

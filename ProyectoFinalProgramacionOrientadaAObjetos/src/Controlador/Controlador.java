@@ -7,6 +7,7 @@ import Entidades.*;
 import Menus.Menu;
 import Menus.MenuAdministrador;
 import Menus.MenuUsuario;
+import util.ValidadorEntrada;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void iniciarSesion() {
+    private static void iniciarSesion() {
         System.out.println("\n===== INICIO DE SESIÓN =====");
 
         for (int intento = 1; intento <= 3; intento++) {
@@ -135,7 +136,7 @@ public class Controlador {
             System.out.println("Debe registrar un administrador para poder continuar.");
         }
     }
-    public static void menuAdministrador() {
+    private static void menuAdministrador() {
         boolean continuar = true;
 
         while (continuar) {
@@ -179,7 +180,7 @@ public class Controlador {
         }
     }
     // Operaciones de canciones
-    public static void administrarCanciones() {
+    private static void administrarCanciones() {
         boolean continuar = true;
 
         while (continuar) {
@@ -196,11 +197,11 @@ public class Controlador {
                         break;
 
                     case 3:
-                        modificarCancion(SesionUsuario.getCuentaActiva());
+                        modificarCancion();
                         break;
 
                     case 4:
-                        eliminarCancion(SesionUsuario.getCuentaActiva());
+                        eliminarCancion();
                         break;
 
                     case 0:
@@ -217,7 +218,7 @@ public class Controlador {
             }
         }
     }
-    public static void crearCancion() {
+    private static void crearCancion() {
         try {
             System.out.println("\n===== CREAR CANCIÓN =====");
 
@@ -244,10 +245,10 @@ public class Controlador {
             String caratula = validarParametro(reader.readLine(), "carátula");
 
             System.out.print("Precio: ");
-            double precio = validarDecimal(reader.readLine(), "precio");
+            double precio = ValidadorEntrada.validarDecimal(reader.readLine(), "precio");
 
             System.out.print("Duración en segundos: ");
-            int duracion = validarEntero(reader.readLine(), "duración");
+            int duracion = ValidadorEntrada.validarEntero(reader.readLine(), "duración");
 
             Cancion cancion = GestorCancion.registrarCancion(nombre, genero, artista, compositor, fechaLanzamiento, album, caratula, precio, duracion);
             System.out.println("Canción registrada correctamente.");
@@ -259,7 +260,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void buscarCancion() {
+    private static void buscarCancion() {
         try {
             System.out.print("\nIngrese el nombre, género o artista de la canción: ");
             String criterio = validarParametro(reader.readLine(), "criterio de búsqueda");
@@ -269,9 +270,9 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void modificarCancion(Cuenta cuenta) {
+    private static void modificarCancion() {
         try {
-            List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
+            List<Cancion> catalogo = GestorCancion.obtenerTodas();
             Cancion cancion = seleccionarCancion(catalogo);
 
             if (cancion == null) {
@@ -290,16 +291,18 @@ public class Controlador {
             String caratula = obtenerNuevoParametro(cancion.getCaratula(), "Carátula");
             double precio = obtenerNuevoDouble(cancion.getPrecio(), "Precio");
             int duracion = obtenerNuevoEntero(cancion.getDuracion(), "Duración");
-            GestorCancion.actualizarCancion(cancion.getIdCancion(), nombre, genero, artista, compositor, fechaLanzamiento, album, caratula, precio, duracion);
+            GestorCancion.actualizarCancion(cancion.getIdCancion(), nombre, genero, artista, compositor, fechaLanzamiento, album, caratula, precio, duracion
+            );
+
             System.out.println("Canción modificada correctamente.");
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
-    public static void eliminarCancion(Cuenta cuenta) {
+    private static void eliminarCancion() {
         try {
-            List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
+            List<Cancion> catalogo = GestorCancion.obtenerTodas();
             Cancion cancion = seleccionarCancion(catalogo);
 
             if (cancion == null) {
@@ -309,10 +312,7 @@ public class Controlador {
             System.out.println("\n===== ELIMINAR CANCIÓN =====");
             System.out.println(cancion);
 
-            System.out.print("¿Está seguro de que desea eliminar esta canción? (S/N): ");
-            String confirmacion = reader.readLine();
-
-            if (!confirmacion.equalsIgnoreCase("S")) {
+            if (!confirmarOperacion("¿Está seguro de que desea eliminar esta canción?")) {
                 System.out.println("Operación cancelada.");
                 return;
             }
@@ -340,7 +340,7 @@ public class Controlador {
             System.out.println("----------------------------------------");
         }
     }
-    public static Cancion seleccionarCancion(List<Cancion> catalogo) {
+    private static Cancion seleccionarCancion(List<Cancion> catalogo) {
         try {
             if (catalogo == null || catalogo.isEmpty()) {
                 System.out.println("No hay canciones disponibles.");
@@ -374,7 +374,7 @@ public class Controlador {
     }
     //Final de operaciones de canciones
     //Operaciones administracion de usuarios
-    public static void administrarUsuarios() {
+    private static void administrarUsuarios() {
         try {
             int opcion;
 
@@ -416,7 +416,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void crearUsuario() {
+    private static void crearUsuario() {
         try {
             System.out.println("\n===== CREAR USUARIO =====");
 
@@ -424,7 +424,7 @@ public class Controlador {
             String nombreCompleto = validarParametro(reader.readLine(), "nombre completo");
 
             System.out.print("Ingrese la fecha de nacimiento: ");
-            LocalDate fechaDeNacimiento = validarFecha(reader.readLine(), "fecha de nacimiento");
+            LocalDate fechaDeNacimiento = ValidadorEntrada.validarFecha(reader.readLine(), "fecha de nacimiento");
 
             String nacionalidad = MenuUsuario.solicitarNacionalidad();
 
@@ -459,7 +459,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void cambiarContrasena() {
+    private static void cambiarContrasena() {
         try {
             Cuenta cuenta = SesionUsuario.getCuentaActiva();
 
@@ -491,7 +491,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void mostrarUsuarios() {
+    private static void mostrarUsuarios() {
         try {
             List<Usuario> usuarios = GestorUsuario.obtenerTodos();
 
@@ -510,7 +510,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static Usuario seleccionarUsuario() {
+    private static Usuario seleccionarUsuario() {
         try {
             int opcion = MenuAdministrador.seleccionarUsuario();
 
@@ -532,7 +532,7 @@ public class Controlador {
     private static Usuario seleccionarUsuarioPorId() {
         try {
             System.out.print("\nIngrese el ID del usuario: ");
-            int idCuenta = validarEntero(reader.readLine(), "ID del usuario");
+            int idCuenta = ValidadorEntrada.validarEntero(reader.readLine(), "ID del usuario");
 
             return GestorUsuario.buscarPorId(idCuenta);
 
@@ -553,14 +553,15 @@ public class Controlador {
             return null;
         }
     }
-    public static void  buscarUsuario(){
+    private static void buscarUsuario() {
         Usuario usuario = seleccionarUsuario();
-        if(usuario == null){
+        if (usuario == null) {
             System.out.println("Usuario no encontrado");
+            return;
         }
         System.out.println(usuario);
     }
-    public static void modificarUsuario() {
+    private static void modificarUsuario() {
         try {
             Usuario usuario = seleccionarUsuario();
 
@@ -580,7 +581,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void eliminarUsuario() {
+    private static void eliminarUsuario() {
         try {
             Usuario usuario = seleccionarUsuario();
 
@@ -591,10 +592,7 @@ public class Controlador {
             System.out.println("\n===== ELIMINAR USUARIO =====");
             System.out.println(usuario);
 
-            System.out.print("¿Está seguro de que desea eliminar este usuario? (S/N): ");
-            String confirmacion = reader.readLine();
-
-            if (!confirmacion.equalsIgnoreCase("S")) {
+            if (!confirmarOperacion("¿Está seguro de que desea eliminar este usuario?")) {
                 System.out.println("Operación cancelada.");
                 return;
             }
@@ -607,7 +605,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void agregarSaldoUsuario() {
+    private static void agregarSaldoUsuario() {
         try {
             Usuario usuario = seleccionarUsuario();
 
@@ -619,7 +617,7 @@ public class Controlador {
             System.out.println("Usuario: " + usuario.getNombrCompleto());
             System.out.println("Saldo actual: $" + usuario.getSaldo());
             System.out.println("Ingrese la cantidad a agregar");
-            double cantidad = validarDecimal(reader.readLine(), "Monto a agregar");
+            double cantidad = ValidadorEntrada.validarDecimal(reader.readLine(), "Monto a agregar");
 
             if (cantidad <= 0) {
                 System.out.println("El monto debe ser mayor que cero.");
@@ -637,7 +635,7 @@ public class Controlador {
     }
     //Fin de operaciones de usuario
     //Aministracion del reproductor
-    public static void administrarReproductor() {
+    private static void administrarReproductor() {
         boolean continuar = true;
 
         while (continuar) {
@@ -692,17 +690,26 @@ public class Controlador {
         }
     }
     //Operaciones del reproductor
-    public static void agregarCancionACola() {
+    private static void agregarCancionACola() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-
-            if (cuenta == null) {
+            if (!SesionUsuario.hayCuentaActiva()) {
                 System.out.println("No hay una sesión activa.");
                 return;
             }
 
-            List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
-            Cancion cancion = seleccionarCancion(catalogo);
+            Cuenta cuenta = SesionUsuario.getCuentaActiva();
+            List<Cancion> canciones;
+
+            if (cuenta instanceof Administador) {
+                canciones = GestorCancion.obtenerTodas();
+            } else if (cuenta instanceof Usuario) {
+                canciones = GestorUsuario.obtenerCancionesCompradas(cuenta.getIdCuenta());
+            } else {
+                System.out.println("Tipo de cuenta no válido.");
+                return;
+            }
+
+            Cancion cancion = seleccionarCancion(canciones);
 
             if (cancion == null) {
                 return;
@@ -715,7 +722,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void reproducirCancion() {
+    private static void reproducirCancion() {
         try {
             SesionUsuario.getReproductor().reproducir();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -724,7 +731,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void pausarCancion() {
+    private static void pausarCancion() {
         try {
             SesionUsuario.getReproductor().pausar();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -733,7 +740,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void reanudarCancion() {
+    private static void reanudarCancion() {
         try {
             SesionUsuario.getReproductor().reanudar();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -742,7 +749,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void avanzarCancion() {
+    private static void avanzarCancion() {
         try {
             SesionUsuario.getReproductor().avanzar();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -751,7 +758,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void retrocederCancion() {
+    private static void retrocederCancion() {
         try {
             SesionUsuario.getReproductor().retroceder();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -760,7 +767,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void siguienteCancion() {
+    private static void siguienteCancion() {
         try {
             SesionUsuario.getReproductor().siguiente();
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
@@ -769,7 +776,7 @@ public class Controlador {
             System.out.println(e.getMessage());
         }
     }
-    public static void mostrarEstadoReproduccion() {
+    private static void mostrarEstadoReproduccion() {
         try {
             System.out.println(SesionUsuario.getReproductor().obtenerEstadoReproduccion());
 
@@ -781,24 +788,15 @@ public class Controlador {
     //Inicio de operaciones de usuario
 
     //Visualizar catalogo general
-    public static void mostrarColeccionComprada() {
+    private static void mostrarColeccionComprada() {
         try {
+            Usuario usuario = obtenerUsuarioActivo();
 
-            if (!SesionUsuario.hayCuentaActiva()) {
-                System.out.println("No existe una sesión activa.");
+            if (usuario == null) {
                 return;
             }
 
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-
-            if (!(cuenta instanceof Usuario)) {
-                System.out.println(
-                        "Esta operación solo está disponible para usuarios."
-                );
-                return;
-            }
-
-            List<Cancion> canciones = GestorUsuario.obtenerCancionesCompradas(cuenta.getIdCuenta());
+            List<Cancion> canciones = GestorUsuario.obtenerCancionesCompradas(usuario.getIdCuenta());
 
             if (canciones.isEmpty()) {
                 System.out.println("\nNo tiene canciones compradas.");
@@ -812,17 +810,11 @@ public class Controlador {
         }
     }
     //Inicio de metodos de compra  de canciones para usuarios
-    public static void comprarCancion() {
+    private static void comprarCancion() {
         try {
-            if (!SesionUsuario.hayCuentaActiva()) {
-                System.out.println("No existe una sesión activa.");
-                return;
-            }
+            Usuario usuario = obtenerUsuarioActivo();
 
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-
-            if (!(cuenta instanceof Usuario)) {
-                System.out.println("Esta operación solo está disponible para usuarios.");
+            if (usuario == null) {
                 return;
             }
 
@@ -853,7 +845,7 @@ public class Controlador {
                 return;
             }
 
-            GestorCompra.comprarCancion(cuenta.getIdCuenta(), cancion.getIdCancion());
+            GestorCompra.comprarCancion(usuario.getIdCuenta(), cancion.getIdCancion());
             System.out.println("\nLa canción \"" + cancion.getNombre() + "\" fue comprada correctamente.");
 
         } catch (Exception e) {
@@ -861,7 +853,7 @@ public class Controlador {
         }
     }
     // Crear listas de reproduccion
-    public static void crearListaReproduccion() {
+    private static void crearListaReproduccion() {
         try {
             Usuario usuario = obtenerUsuarioActivo();
 
@@ -883,30 +875,33 @@ public class Controlador {
         }
     }
     // Busqueda de canciones en el catalogo general del usuario
-    public static List<Cancion> buscarCancionEnColeccion() {
+    private static void buscarCancionEnColeccion() {
         try {
-            if (!SesionUsuario.hayCuentaActiva()) {
-                System.out.println("No existe una sesión activa.");
-                return null;
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
             }
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
-            List<Cancion> canciones = GestorUsuario.obtenerCancionesCompradas(cuenta.getIdCuenta());
-            if (canciones == null || canciones.isEmpty()) {System.out.println("No tiene canciones compradas.");
-                return null;
+
+            List<Cancion> canciones = GestorUsuario.obtenerCancionesCompradas(usuario.getIdCuenta());
+
+            if (canciones == null || canciones.isEmpty()) {
+                System.out.println("No tiene canciones compradas.");
+                return;
             }
+
             String criterio = MenuUsuario.solicitarBusquedaCancion();
             List<Cancion> resultados = GestorCancion.buscarGeneral(canciones, criterio);
 
             if (resultados.isEmpty()) {
                 System.out.println("No se encontraron canciones en su colección con este criterio.");
-                return null;
+                return;
             }
+
             mostrarCanciones(resultados);
-            return resultados;
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return null;
         }
     }
     //Mostrar listas al entrar
@@ -919,24 +914,23 @@ public class Controlador {
         }
     }
     // Calificacion de canciones
-    public static void calificarCancion() {
+    private static void calificarCancion() {
         try {
-            Cuenta cuenta = SesionUsuario.getCuentaActiva();
+            Usuario usuario = obtenerUsuarioActivo();
 
-            if (!(cuenta instanceof Usuario)) {
-                System.out.println("Esta operación solo está disponible para usuarios.");
+            if (usuario == null) {
                 return;
             }
 
-            List<Cancion> catalogo = obtenerCatalogoDisponible(cuenta);
-            Cancion cancion = seleccionarCancion(catalogo);
+            List<Cancion> cancionesCompradas = GestorUsuario.obtenerCancionesCompradas(usuario.getIdCuenta());
+            Cancion cancion = seleccionarCancion(cancionesCompradas);
 
             if (cancion == null) {
                 return;
             }
 
             System.out.print("Ingrese la calificación de la canción (0.0 - 5.0): ");
-            double calificacion = validarDecimal(reader.readLine(), "calificación");
+            double calificacion = ValidadorEntrada.validarDecimal(reader.readLine(), "calificación");
 
             if (calificacion < 0.0 || calificacion > 5.0) {
                 System.out.println("La calificación debe estar entre 0.0 y 5.0.");
@@ -951,7 +945,7 @@ public class Controlador {
         }
     }
     // agregacion de cancion a una playlist
-    public static void agregarCancionALista() {
+    private static void agregarCancionALista() {
         try {
             Usuario usuario = obtenerUsuarioActivo();
 
@@ -968,8 +962,8 @@ public class Controlador {
             boolean continuar = true;
 
             while (continuar) {
-                List<Cancion> catalogo = obtenerCatalogoDisponible(usuario);
-                Cancion cancion = seleccionarCancion(catalogo);
+                List<Cancion> cancionesCompradas = GestorUsuario.obtenerCancionesCompradas(usuario.getIdCuenta());
+                Cancion cancion = seleccionarCancion(cancionesCompradas);
 
                 if (cancion == null) {
                     return;
@@ -987,7 +981,7 @@ public class Controlador {
         }
     }
     // Elminar canciones de lista
-    public static void eliminarCancionDeLista() {
+    private static void eliminarCancionDeLista() {
         try {
             Usuario usuario = obtenerUsuarioActivo();
 
@@ -1011,10 +1005,7 @@ public class Controlador {
                     return;
                 }
 
-                System.out.print("¿Está seguro de que desea eliminar esta canción? (S/N): ");
-                String confirmacion = reader.readLine().trim();
-
-                if (!confirmacion.equalsIgnoreCase("S")) {
+                if (!confirmarOperacion("¿Está seguro de que desea eliminar esta canción de la lista?")) {
                     System.out.println("Operación cancelada.");
                     continuar = MenuUsuario.solicitarOtraCancion();
                     continue;
@@ -1033,7 +1024,7 @@ public class Controlador {
         }
     }
     //Eliminar una lista de reproduccion
-    public static void eliminarListaReproduccion() {
+    private static void eliminarListaReproduccion() {
         try {
             Usuario usuario = obtenerUsuarioActivo();
 
@@ -1049,16 +1040,14 @@ public class Controlador {
 
             System.out.println("\n===== ELIMINAR LISTA DE REPRODUCCIÓN =====");
             System.out.println("Lista: " + lista.getNombre());
-            System.out.print("¿Está seguro de que desea eliminar esta lista? (S/N): ");
 
-            String confirmacion = reader.readLine().trim();
-
-            if (!confirmacion.equalsIgnoreCase("S")) {
+            if (!confirmarOperacion("¿Está seguro de que desea eliminar esta lista?")) {
                 System.out.println("Operación cancelada.");
                 return;
             }
 
             GestorListaRepoduccion.eliminarLista(lista.getIdLista(), usuario);
+
             System.out.println("La lista de reproducción fue eliminada correctamente.");
 
         } catch (Exception e) {
@@ -1073,12 +1062,11 @@ public class Controlador {
             switch (opcion) {
                 case 1:
                     List<ListaRepoduccion> listas = GestorListaRepoduccion.obtenerPorUsuario(usuario);
-                    return MenuUsuario.solicitarListaReproduccion(listas);
+                    return seleccionarListaDeResultados(listas);
+
                 case 2:
                     System.out.print("Ingrese el nombre de la lista de reproducción: ");
-                    String nombre = validarParametro(reader.readLine(), "nombre de la lista"
-                    );
-
+                    String nombre = validarParametro(reader.readLine(), "nombre de la lista");
                     List<ListaRepoduccion> resultados = GestorListaRepoduccion.buscarPorNombre(nombre, usuario);
 
                     if (resultados.isEmpty()) {
@@ -1086,7 +1074,7 @@ public class Controlador {
                         return null;
                     }
 
-                    return MenuUsuario.solicitarListaReproduccion(resultados);
+                    return seleccionarListaDeResultados(resultados);
 
                 case 0:
                     return null;
@@ -1109,12 +1097,11 @@ public class Controlador {
             switch (opcion) {
                 case 1:
                     List<ListaRepoduccion> listas = GestorListaRepoduccion.obtenerTodas();
-                    return MenuUsuario.solicitarListaReproduccion(listas);
+                    return seleccionarListaDeResultados(listas);
 
                 case 2:
                     System.out.print("Ingrese el nombre de la lista de reproducción: ");
                     String nombre = validarParametro(reader.readLine(), "nombre de la lista");
-
                     List<ListaRepoduccion> resultados = GestorListaRepoduccion.buscarPorNombre(nombre);
 
                     if (resultados.isEmpty()) {
@@ -1122,7 +1109,7 @@ public class Controlador {
                         return null;
                     }
 
-                    return MenuUsuario.solicitarListaReproduccion(resultados);
+                    return seleccionarListaDeResultados(resultados);
 
                 case 0:
                     return null;
@@ -1139,7 +1126,7 @@ public class Controlador {
     }
     //Reproduccion de listas para el administrador
 
-    public static void reproducirLista() {
+    private static void reproducirLista() {
         try {
             if (!SesionUsuario.hayCuentaActiva()) {
                 System.out.println("No existe una sesión activa.");
@@ -1173,7 +1160,7 @@ public class Controlador {
     }
     //Fin de listas de reproduccion para el administrado
     // Metodos de menus de usuario
-    public static void menuUsuario() {
+    private static void menuUsuario() {
         boolean continuar = true;
 
         while (continuar) {
@@ -1217,6 +1204,10 @@ public class Controlador {
                         cambiarContrasena();
                         break;
 
+                    case 10:
+                        recargarSaldo();
+                        break;
+
                     case 0:
                         SesionUsuario.cerrarSesion();
                         continuar = false;
@@ -1228,12 +1219,44 @@ public class Controlador {
                 }
 
             } catch (IOException e) {
-                System.out.println("Error al leer la opción. Intente nuevamente.");
+                System.out.println("Error al leer la opción.");
             }
         }
     }
+    //Recargar Saldo
+    private static void recargarSaldo() {
+        try {
+            Usuario usuario = obtenerUsuarioActivo();
+
+            if (usuario == null) {
+                return;
+            }
+
+            System.out.println("\n===== RECARGAR SALDO =====");
+            System.out.printf("Saldo actual: $%.2f%n", usuario.getSaldo());
+
+            System.out.print("Ingrese el monto a recargar: ");
+            double monto = ValidadorEntrada.validarDecimal(
+                    reader.readLine(),
+                    "monto"
+            );
+
+            if (monto <= 0) {
+                System.out.println("El monto debe ser mayor que cero.");
+                return;
+            }
+
+            GestorUsuario.agregarSaldo(usuario.getIdCuenta(), monto);
+
+            System.out.printf("Recarga realizada correctamente. Nuevo saldo: $%.2f%n",
+                    usuario.getSaldo() + monto);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
     //Metodos de estadistica
-    public static void mostrarTop3() {
+    private static void mostrarTop3() {
         try {
             List<Cancion> mejoresCalificadas = GestorEstadisticas.obtenerTop3MejorCalificadas();
             List<Cancion> masCompradas = GestorEstadisticas.obtenerTop3MasCompradas();
@@ -1287,26 +1310,29 @@ public class Controlador {
         }
     }
     // Adminsitra menu listas
-    public static void administrarListasUsuario() {
+    private static void administrarListasUsuario() {
         boolean continuar = true;
 
         while (continuar) {
             int opcion = MenuUsuario.menuListasReproduccion();
-
             switch (opcion) {
                 case 1:
-                    crearListaReproduccion();
+                    mostrarListasUsuario(obtenerUsuarioActivo());
                     break;
 
                 case 2:
-                    agregarCancionALista();
+                    crearListaReproduccion();
                     break;
 
                 case 3:
-                    eliminarCancionDeLista();
+                    agregarCancionALista();
                     break;
 
                 case 4:
+                    eliminarCancionDeLista();
+                    break;
+
+                case 5:
                     eliminarListaReproduccion();
                     break;
 
@@ -1329,39 +1355,7 @@ public class Controlador {
         }
         return parametro;
     }
-    public static int validarEntero(String parametro, String nombreParametro) throws ParametroInvalidoException {
-        if (parametro == null || parametro.isBlank()) {
-            throw new ParametroInvalidoException("El campo " + nombreParametro + " no puede estar vacío.");
-        }
 
-        try {
-            return Integer.parseInt(parametro);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("El campo " + nombreParametro + " debe ser un número entero.");
-        }
-    }
-    private static double validarDecimal(String parametro, String nombreParametro) throws ParametroInvalidoException {
-        if (parametro == null || parametro.isBlank()) {
-            throw new ParametroInvalidoException("El campo " + nombreParametro + " no puede estar vacío.");
-        }
-
-        try {
-            return Double.parseDouble(parametro);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("El campo " + nombreParametro + " debe ser un número válido.");
-        }
-    }
-    private static LocalDate validarFecha(String parametro, String nombreParametro) throws ParametroInvalidoException {
-        if (parametro == null || parametro.isBlank()) {
-            throw new ParametroInvalidoException("El campo " + nombreParametro + " no puede estar vacío.");
-        }
-
-        try {
-            return LocalDate.parse(parametro);
-        } catch (DateTimeParseException e) {
-            throw new ParametroInvalidoException("El campo " + nombreParametro + " debe tener el formato YYYY-MM-DD.");
-        }
-    }
     private static String obtenerNuevoParametro(String valorActual, String nombreParametro) throws IOException {
         System.out.print(nombreParametro + " actual: " + valorActual + ". Nuevo " + nombreParametro + " (Enter para conservar): ");
         String nuevoValor = reader.readLine();
@@ -1417,18 +1411,12 @@ public class Controlador {
             }
         }
     }
-    private static List<Cancion> obtenerCatalogoDisponible(Cuenta cuenta) throws Exception {
-        if (cuenta instanceof Administador) {
-            return GestorCancion.obtenerTodas();
-        }
-
-        if (cuenta instanceof Usuario) {
-            return GestorUsuario.obtenerCancionesCompradas(cuenta.getIdCuenta());
-        }
-
-        return null;
-    }
     private static Usuario obtenerUsuarioActivo() {
+        if (!SesionUsuario.hayCuentaActiva()) {
+            System.out.println("No existe una sesión activa.");
+            return null;
+        }
+
         Cuenta cuenta = SesionUsuario.getCuentaActiva();
 
         if (!(cuenta instanceof Usuario)) {
@@ -1437,6 +1425,36 @@ public class Controlador {
         }
 
         return (Usuario) cuenta;
+    }
+    //Confirmacion de operaciones
+    private static boolean confirmarOperacion(String mensaje) throws IOException {
+        while (true) {
+            System.out.print(mensaje + " (S/N): ");
+            String respuesta = reader.readLine();
+
+            if (respuesta == null) {
+                return false;
+            }
+
+            if (respuesta.equalsIgnoreCase("S")) {
+                return true;
+            }
+
+            if (respuesta.equalsIgnoreCase("N")) {
+                return false;
+            }
+
+            System.out.println("Ingrese S o N.");
+        }
+    }
+    //Auxiliar para listas de reproduccion
+    private static ListaRepoduccion seleccionarListaDeResultados(List<ListaRepoduccion> listas) {
+        if (listas == null || listas.isEmpty()) {
+            System.out.println("No hay listas de reproducción disponibles.");
+            return null;
+        }
+
+        return MenuUsuario.solicitarListaReproduccion(listas);
     }
     //Auxiliares compra
     private static void previsualizarCancion(Cancion cancion) {
@@ -1449,5 +1467,6 @@ public class Controlador {
         System.out.println("Duración: 30 segundos");
         System.out.println("La previsualización no requiere la compra de la canción.");
     }
+
 
 }

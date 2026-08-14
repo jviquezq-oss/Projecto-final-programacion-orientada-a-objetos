@@ -10,6 +10,7 @@ import java.util.List;
 
 import Entidades.Cancion;
 import Entidades.ListaRepoduccion;
+import util.ValidadorEntrada;
 
 public class Menu {
     protected static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -23,7 +24,7 @@ public class Menu {
         System.out.println("========================================");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(),"opcion");
+        return ValidadorEntrada.validarEntero(reader.readLine(),"opcion");
     }
     public static int seleccionarReproductor() throws IOException {
         System.out.println("\n===== REPRODUCTOR =====");
@@ -37,7 +38,7 @@ public class Menu {
         System.out.println("8. Ver estado de reproducción");
         System.out.println("9. Regresar");
         System.out.println("Seleccione una opción:");
-        return Controlador.validarEntero(reader.readLine(),"opcion");
+        return ValidadorEntrada.validarEntero(reader.readLine(),"opcion");
     }
     public static ListaRepoduccion solicitarListaReproduccion(List<ListaRepoduccion> listasDisponibles) {
 
@@ -66,7 +67,7 @@ public class Menu {
 
             int opcion = 0;
             try {
-                opcion = Controlador.validarEntero(reader.readLine(), "opcion de lista");
+                opcion = ValidadorEntrada.validarEntero(reader.readLine(), "opcion de lista");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -88,7 +89,7 @@ public class Menu {
         System.out.println("2. Buscar canción");
         System.out.println("0. Regresar");
         System.out.println("Seleccione una opcion: ");
-        return Controlador.validarEntero(reader.readLine(),"Seleccione una opción: ");
+        return ValidadorEntrada.validarEntero(reader.readLine(),"Seleccione una opción: ");
     }
     public static String solicitarBusquedaCancion() throws IOException {
         System.out.println("\n===== BUSCAR CANCIÓN =====");
@@ -116,7 +117,7 @@ public class Menu {
         System.out.println("Seleccione una opcion: ");
         while (true) {
 
-            int opcion = Controlador.validarEntero(reader.readLine(),"Seleccione una canción (0 para regresar): ");
+            int opcion = ValidadorEntrada.validarEntero(reader.readLine(),"Seleccione una canción (0 para regresar): ");
 
             if (opcion == 0) {
                 return null;
@@ -136,6 +137,6 @@ public class Menu {
         System.out.println("0. Salir");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
 }

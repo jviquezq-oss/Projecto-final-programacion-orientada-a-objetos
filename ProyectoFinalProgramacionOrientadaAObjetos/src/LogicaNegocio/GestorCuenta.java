@@ -3,81 +3,156 @@ package LogicaNegocio;
 import DAO.CuentaDAO;
 import Entidades.Cuenta;
 
+import java.sql.SQLException;
+
 public class GestorCuenta {
 
     public static Cuenta registrarCuenta(String correoElectronico, String contrasena, String nombreUsuario) throws Exception {
-        Cuenta nuevaCuenta = new Cuenta(correoElectronico, contrasena, nombreUsuario);
-        return CuentaDAO.insertar(nuevaCuenta);
+        try {
+            Cuenta nuevaCuenta = new Cuenta(correoElectronico, contrasena, nombreUsuario);
+            return CuentaDAO.insertar(nuevaCuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación registrar cuenta no pudo ser realizada.", e);
+        }
     }
 
     public static Cuenta buscarPorCorreoElectronico(String correoElectronico) throws Exception {
-        return CuentaDAO.buscarPorCorreoElectronico(correoElectronico);
+        try {
+            return CuentaDAO.buscarPorCorreoElectronico(correoElectronico);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación buscar cuenta por correo electrónico no pudo ser realizada.", e);
+        }
     }
 
     public static Cuenta buscarPorNombreUsuario(String nombreUsuario) throws Exception {
-        return CuentaDAO.buscarPorNombreUsuario(nombreUsuario);
+        try {
+            return CuentaDAO.buscarPorNombreUsuario(nombreUsuario);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación buscar cuenta por nombre de usuario no pudo ser realizada.", e);
+        }
     }
 
     public static Cuenta buscarPorId(int idCuenta) throws Exception {
-        return CuentaDAO.buscarPorId(idCuenta);
-    }
-    public static void actualizarContrasena(int idCuenta, String contrasena) throws Exception {
-        Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);
+        try {
+            return CuentaDAO.buscarPorId(idCuenta);
 
-        if (cuenta == null) {
-            throw new Exception("La cuenta no existe.");
+        } catch (SQLException e) {
+            throw new Exception("La operación buscar cuenta por ID no pudo ser realizada.", e);
         }
+    }
 
-        CuentaDAO.actualizarContrasena(idCuenta, contrasena);
+    public static void actualizarContrasena(int idCuenta, String contrasena) throws Exception {
+        try {
+            Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);
+
+            if (cuenta == null) {
+                throw new Exception("La cuenta no existe.");
+            }
+
+            CuentaDAO.actualizarContrasena(idCuenta, contrasena);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación actualizar contraseña no pudo ser realizada.", e);
+        }
     }
 
     public static void cambiarContrasena(int idCuenta, String contrasenaActual, String nuevaContrasena, String confirmacion) throws Exception {
-        Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);
-        if (cuenta == null) {
-            throw new Exception("La cuenta no existe.");
+        try {
+            Cuenta cuenta = CuentaDAO.buscarPorId(idCuenta);
+
+            if (cuenta == null) {
+                throw new Exception("La cuenta no existe.");
+            }
+
+            cuenta.cambiarContrasena(contrasenaActual, nuevaContrasena, confirmacion);
+            CuentaDAO.actualizar(cuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación cambiar contraseña no pudo ser realizada.", e);
         }
-        cuenta.cambiarContrasena(contrasenaActual, nuevaContrasena, confirmacion);
-        CuentaDAO.actualizar(cuenta);
     }
 
     public static void actualizarCuenta(Cuenta cuenta) throws Exception {
-        CuentaDAO.actualizar(cuenta);
+        try {
+            CuentaDAO.actualizar(cuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación actualizar cuenta no pudo ser realizada.", e);
+        }
     }
 
     public static void actualizarCuentaPorCorreoElectronico(String correoElectronico, String nuevoCorreoElectronico, String nuevaContrasena, String nuevoNombreUsuario) throws Exception {
-        Cuenta cuenta = CuentaDAO.buscarPorCorreoElectronico(correoElectronico);
-        if (cuenta == null) {
-            throw new Exception("La cuenta no existe.");
+        try {
+            Cuenta cuenta = CuentaDAO.buscarPorCorreoElectronico(correoElectronico);
+
+            if (cuenta == null) {
+                throw new Exception("La cuenta no existe.");
+            }
+
+            cuenta.setCorreoElectronico(nuevoCorreoElectronico);
+            cuenta.setContrasena(nuevaContrasena);
+            cuenta.setNombreUsuario(nuevoNombreUsuario);
+            CuentaDAO.actualizar(cuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación actualizar cuenta por correo electrónico no pudo ser realizada.", e);
         }
-        cuenta.setCorreoElectronico(nuevoCorreoElectronico);
-        cuenta.setContrasena(nuevaContrasena);
-        cuenta.setNombreUsuario(nuevoNombreUsuario);
-        CuentaDAO.actualizar(cuenta);
     }
 
     public static void actualizarCuentaPorNombreUsuario(String nombreUsuario, String nuevoCorreoElectronico, String nuevaContrasena, String nuevoNombreUsuario) throws Exception {
-        Cuenta cuenta = CuentaDAO.buscarPorNombreUsuario(nombreUsuario);
-        if (cuenta == null) {
-            throw new Exception("La cuenta no existe.");
+        try {
+            Cuenta cuenta = CuentaDAO.buscarPorNombreUsuario(nombreUsuario);
+
+            if (cuenta == null) {
+                throw new Exception("La cuenta no existe.");
+            }
+
+            cuenta.setCorreoElectronico(nuevoCorreoElectronico);
+            cuenta.setContrasena(nuevaContrasena);
+            cuenta.setNombreUsuario(nuevoNombreUsuario);
+            CuentaDAO.actualizar(cuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación actualizar cuenta por nombre de usuario no pudo ser realizada.", e);
         }
-        cuenta.setCorreoElectronico(nuevoCorreoElectronico);
-        cuenta.setContrasena(nuevaContrasena);
-        cuenta.setNombreUsuario(nuevoNombreUsuario);
-        CuentaDAO.actualizar(cuenta);
     }
 
     public static void eliminarCuenta(int idCuenta) throws Exception {
-        CuentaDAO.eliminar(idCuenta);
+        try {
+            CuentaDAO.eliminar(idCuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación eliminar cuenta no pudo ser realizada.", e);
+        }
     }
 
     public static void eliminarCuentaPorCorreoElectronico(String correoElectronico) throws Exception {
-        CuentaDAO.eliminarPorCorreoElectronico(correoElectronico);
+        try {
+            CuentaDAO.eliminarPorCorreoElectronico(correoElectronico);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación eliminar cuenta por correo electrónico no pudo ser realizada.", e);
+        }
     }
 
     public static void eliminarCuentaPorNombreUsuario(String nombreUsuario) throws Exception {
-        CuentaDAO.eliminarPorNombreUsuario(nombreUsuario);
+        try {
+            CuentaDAO.eliminarPorNombreUsuario(nombreUsuario);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación eliminar cuenta por nombre de usuario no pudo ser realizada.", e);
+        }
     }
+
     public static String obtenerTipoCuenta(int idCuenta) throws Exception {
-        return CuentaDAO.obtenerTipoCuenta(idCuenta);
+        try {
+            return CuentaDAO.obtenerTipoCuenta(idCuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación obtener tipo de cuenta no pudo ser realizada.", e);
+        }
     }
 }

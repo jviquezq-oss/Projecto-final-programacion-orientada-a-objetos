@@ -1,6 +1,5 @@
 package LogicaNegocio;
 
-import DAO.CancionDAO;
 import DAO.CompraDAO;
 import DAO.UsuarioDAO;
 import Entidades.Cancion;
@@ -8,6 +7,7 @@ import Entidades.Cuenta;
 import Entidades.Usuario;
 import Excepciones.ParametroInvalidoException;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,113 +24,119 @@ public class GestorUsuario {
             throw new ParametroInvalidoException("La contraseña y su confirmación no coinciden.");
         }
 
-        Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
-        Usuario nuevoUsuario = new Usuario(nuevaCuenta.getIdCuenta(), nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena);
+        try {
+            Cuenta nuevaCuenta = GestorCuenta.registrarCuenta(correoElectronico, contrasena, nombreUsuario);
+            Usuario nuevoUsuario = new Usuario(nuevaCuenta.getIdCuenta(), nombreCompleto, fechaDeNacimiento, nacionalidad, cedula, avatar, nombreUsuario, correoElectronico, contrasena);
 
-        return UsuarioDAO.insertar(nuevoUsuario);
+            return UsuarioDAO.insertar(nuevoUsuario);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación registrar usuario no pudo ser realizada.", e);
+        }
     }
+
     public static List<Usuario> obtenerTodos() throws Exception {
-        return UsuarioDAO.listarTodos();
+        try {
+            return UsuarioDAO.listarTodos();
+
+        } catch (SQLException e) {
+            throw new Exception("La operación obtener usuarios no pudo ser realizada.", e);
+        }
     }
-    public static Usuario buscarPorNombreUsuario(String nombreUsuario   ) throws Exception {
+
+    public static Usuario buscarPorNombreUsuario(String nombreUsuario) throws Exception {
         Cuenta cuentaDeUsuario = GestorCuenta.buscarPorNombreUsuario(nombreUsuario);
-        if(cuentaDeUsuario == null){
+
+        if (cuentaDeUsuario == null) {
             throw new Exception("El usuario no fue econtrado");
         }
+
         return buscarPorId(cuentaDeUsuario.getIdCuenta());
     }
+
     public static Usuario buscarPorId(int idCuenta) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
+        try {
+            Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
+            if (usuario == null) {
+                throw new Exception("El usuario no existe.");
+            }
+
+            return usuario;
+
+        } catch (SQLException e) {
+            throw new Exception("La operación buscar usuario por ID no pudo ser realizada.", e);
         }
-
-        return usuario;
     }
 
     public static void actualizarUsuario(int idCuenta, String nombreCompleto, LocalDate fechaDeNacimiento, String nacionalidad, String cedula, String avatar) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
+        try {
+            Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
+            if (usuario == null) {
+                throw new Exception("El usuario no existe.");
+            }
+
+            usuario.setNombrCompleto(nombreCompleto);
+            usuario.setFechaDeNacimiento(fechaDeNacimiento);
+            usuario.setNacionalidad(nacionalidad);
+            usuario.setCedula(cedula);
+            usuario.setAvatar(avatar);
+
+            UsuarioDAO.actualizar(usuario);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación actualizar usuario no pudo ser realizada.", e);
         }
-
-        usuario.setNombrCompleto(nombreCompleto);
-        usuario.setFechaDeNacimiento(fechaDeNacimiento);
-        usuario.setNacionalidad(nacionalidad);
-        usuario.setCedula(cedula);
-        usuario.setAvatar(avatar);
-
-        UsuarioDAO.actualizar(usuario);
     }
 
     public static void eliminarUsuario(int idCuenta) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
+        try {
+            Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
+            if (usuario == null) {
+                throw new Exception("El usuario no existe.");
+            }
+
+            UsuarioDAO.eliminar(idCuenta);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación eliminar usuario no pudo ser realizada.", e);
         }
-
-        UsuarioDAO.eliminar(idCuenta);
     }
 
     public static void agregarSaldo(int idCuenta, double cantidad) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
+        try {
+            Usuario usuario = UsuarioDAO.buscarPorId(idCuenta);
 
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
+            if (usuario == null) {
+                throw new Exception("El usuario no existe.");
+            }
+
+            if (cantidad <= 0) {
+                throw new Exception("La cantidad debe ser mayor que cero.");
+            }
+
+            UsuarioDAO.agregarSaldo(idCuenta, cantidad);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación agregar saldo no pudo ser realizada.", e);
         }
-
-        if (cantidad <= 0) {
-            throw new Exception("La cantidad debe ser mayor que cero.");
-        }
-
-        UsuarioDAO.agregarSaldo(idCuenta, cantidad);
     }
 
     public static List<Cancion> obtenerCancionesCompradas(int idUsuario) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idUsuario);
+        try {
+            Usuario usuario = UsuarioDAO.buscarPorId(idUsuario);
 
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
+            if (usuario == null) {
+                throw new Exception("El usuario no existe.");
+            }
+
+            return CompraDAO.obtenerCancionesCompradas(idUsuario);
+
+        } catch (SQLException e) {
+            throw new Exception("La operación obtener canciones compradas no pudo ser realizada.", e);
         }
-
-        return CompraDAO.obtenerCancionesCompradas(idUsuario);
     }
 
-    public static void comprarCancion(int idUsuario, int idCancion) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idUsuario);
-
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
-        }
-
-        Cancion cancion = CancionDAO.buscarPorId(idCancion);
-
-        if (cancion == null) {
-            throw new Exception("La canción no existe.");
-        }
-
-        if (CompraDAO.existe(idUsuario, idCancion)) {
-            throw new Exception("El usuario ya posee esta canción.");
-        }
-
-        if (usuario.getSaldo() < cancion.getPrecio()) {
-            throw new Exception("El usuario no posee saldo suficiente.");
-        }
-
-        UsuarioDAO.agregarSaldo(idUsuario, -cancion.getPrecio());
-        CompraDAO.insertar(idUsuario, idCancion, cancion.getPrecio());
-    }
-
-    public static boolean verificarCompra(int idUsuario, int idCancion) throws Exception {
-        Usuario usuario = UsuarioDAO.buscarPorId(idUsuario);
-
-        if (usuario == null) {
-            throw new Exception("El usuario no existe.");
-        }
-
-        return CompraDAO.existe(idUsuario, idCancion);
-    }
 }

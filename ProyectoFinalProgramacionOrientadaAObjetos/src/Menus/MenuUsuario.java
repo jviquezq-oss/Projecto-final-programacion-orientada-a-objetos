@@ -4,6 +4,7 @@ import Entidades.Cancion;
 import Entidades.ListaRepoduccion;
 import Entidades.Nacionalidad;
 import Excepciones.ParametroInvalidoException;
+import util.ValidadorEntrada;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +35,7 @@ public class MenuUsuario extends Menu{
         System.out.println("0. Cancelar");
         System.out.println("========================================");
         System.out.println("Seleccione una opcion");
-        return Controlador.validarEntero(reader.readLine(),"opcion");
+        return ValidadorEntrada.validarEntero(reader.readLine(),"opcion");
     }
     public static ListaRepoduccion solicitarListaReproduccion(List<ListaRepoduccion> listas) {
         try {
@@ -51,7 +52,7 @@ public class MenuUsuario extends Menu{
 
             System.out.println("0. Regresar");
 
-            int seleccion = Controlador.validarEntero(reader.readLine(), "selección");
+            int seleccion = ValidadorEntrada.validarEntero(reader.readLine(), "selección");
 
             if (seleccion == 0) {
                 return null;
@@ -100,7 +101,7 @@ public class MenuUsuario extends Menu{
 
             System.out.println("0. Regresar");
 
-            int seleccion = Controlador.validarEntero(reader.readLine(), "selección");
+            int seleccion = ValidadorEntrada.validarEntero(reader.readLine(), "selección");
 
             if (seleccion == 0) {
                 return null;
@@ -125,7 +126,7 @@ public class MenuUsuario extends Menu{
         System.out.println("0. Regresar");
 
         try {
-            return Controlador.validarEntero(
+            return ValidadorEntrada.validarEntero(
                     reader.readLine(),
                     "opción"
             );
@@ -145,21 +146,23 @@ public class MenuUsuario extends Menu{
         System.out.println("7. Reproducir lista de reproducción");
         System.out.println("8. Ver Top 3");
         System.out.println("9. Cambiar contraseña");
+        System.out.println("10. Recargar saldo");
         System.out.println("0. Cerrar sesión");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
     public static int menuListasReproduccion() {
         System.out.println("\n===== LISTAS DE REPRODUCCIÓN =====");
-        System.out.println("1. Crear lista");
-        System.out.println("2. Agregar canción a lista");
-        System.out.println("3. Eliminar canción de lista");
-        System.out.println("4. Eliminar lista");
+        System.out.println("1. Ver listas de reproducción");
+        System.out.println("2. Crear lista");
+        System.out.println("3. Agregar canción a lista");
+        System.out.println("4. Eliminar canción de lista");
+        System.out.println("5. Eliminar lista");
         System.out.println("0. Regresar");
 
         try {
-            return Controlador.validarEntero(reader.readLine(), "opción");
+            return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
         } catch (IOException | ParametroInvalidoException e) {
             System.out.println(e.getMessage());
             return 0;
@@ -176,7 +179,7 @@ public class MenuUsuario extends Menu{
 
         System.out.println("0. Regresar");
 
-        int opcion = Controlador.validarEntero(reader.readLine(), "opción");
+        int opcion = ValidadorEntrada.validarEntero(reader.readLine(), "opción");
 
         if (opcion == 0) {
             return null;
@@ -216,7 +219,7 @@ public class MenuUsuario extends Menu{
         System.out.println("0. Regresar");
         System.out.print("Seleccione una opción: ");
 
-        return Controlador.validarEntero(reader.readLine(), "opción");
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
     private static void mostrarRanking(List<Cancion> canciones, boolean mostrarCalificacion) {
         if (canciones == null || canciones.isEmpty()) {
