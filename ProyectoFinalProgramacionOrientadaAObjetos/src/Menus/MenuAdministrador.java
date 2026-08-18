@@ -1,50 +1,57 @@
 package Menus;
-
-import LogicaNegocio.AdministadorCatalogo;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import Controlador.Controlador;
+import util.ValidadorEntrada;
 
-public class MenuAdministrador {
-    private static BufferedReader reader;
-
-    public MenuAdministrador() {
+public class MenuAdministrador extends Menu {
+    private MenuAdministrador() {
     }
 
-    public static void mostrarMenuAdministrador() throws IOException {
-        int opcion = 0;
+    public static int mostrarMenu() throws IOException {
+        System.out.println("\n===== MENÚ ADMINISTRADOR =====");
+        System.out.println("1. Administrar canciones");
+        System.out.println("2. Administrar usuarios");
+        System.out.println("3. Administrar reproductor");
+        System.out.println("4. Reproducir playlist");
+        System.out.println("5. Cambiar contraseña");
+        System.out.println("0. Cerrar sesión");
+        System.out.print("Seleccione una opción: ");
 
-        do {
-            System.out.println();
-            System.out.println("===== MENU ADMINISTRADOR =====");
-            System.out.println("1. Agregar nueva canción al catálogo");
-            System.out.println("2. Salir");
-            System.out.print("Seleccione una opción: ");
-
-            try {
-                opcion = Integer.parseInt(reader.readLine());
-            } catch (NumberFormatException var2) {
-                System.out.println("Debe ingresar un número válido.");
-                continue;
-            }
-
-            switch (opcion) {
-                case 1:
-                    AdministadorCatalogo.agregarCancion();
-                    System.out.println("\nPresione ENTER para continuar...");
-                    reader.readLine();
-                    break;
-                case 2:
-                    System.out.println("Cerrando menú administrador...");
-                    break;
-                default:
-                    System.out.println("Seleccione una opción válida.");
-            }
-        } while(opcion != 2);
-
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
+    public static int menuCanciones() throws IOException {
+        System.out.println("\n========================================");
+        System.out.println("       ADMINISTRACIÓN DE CANCIONES");
+        System.out.println("========================================");
+        System.out.println("1. Crear canción");
+        System.out.println("2. Buscar canción");
+        System.out.println("3. Modificar canción");
+        System.out.println("4. Eliminar canción");
+        System.out.println("0. Regresar");
+        System.out.println("========================================");
+        System.out.print("Seleccione una opción: ");
 
-    static {
-        reader = new BufferedReader(new InputStreamReader(System.in));
+      return ValidadorEntrada.validarEntero(reader.readLine(),"opcion");
+    }
+    public static int administrarUsuarios() throws IOException {
+        System.out.println("\n===== ADMINISTRAR USUARIOS =====");
+        System.out.println("1. Mostrar usuarios");
+        System.out.println("2. Buscar usuario");
+        System.out.println("3. Modificar usuario");
+        System.out.println("4. Eliminar usuario");
+        System.out.println("5. Agregar saldo");
+        System.out.println("0. Regresar");
+        System.out.print("Seleccione una opción: ");
+
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
+    }
+    public static int seleccionarUsuario() throws IOException {
+        System.out.println("\n===== SELECCIONAR USUARIO =====");
+        System.out.println("1. Buscar por ID");
+        System.out.println("2. Buscar por nombre de usuario");
+        System.out.println("0. Regresar");
+        System.out.print("Seleccione una opción: ");
+
+        return ValidadorEntrada.validarEntero(reader.readLine(), "opción");
     }
 }

@@ -1,18 +1,35 @@
 package LogicaNegocio;
 
-import Entidades.Usuario;
+import Entidades.Cuenta;
+import Entidades.Reproductor;
 
-public class SesionUsuario {
-    private static Usuario usuarioActivo;
+public final class SesionUsuario {
 
-    public SesionUsuario() {
+    private static Cuenta cuentaActiva;
+    private static Reproductor reproductor;
+
+    private SesionUsuario() {
     }
 
-    public static Usuario getUsuarioActivo() {
-        return usuarioActivo;
+    public static Cuenta getCuentaActiva() {
+        return cuentaActiva;
     }
 
-    public static void setUsuarioActivo(Usuario usuarioActivo) {
-        SesionUsuario.usuarioActivo = usuarioActivo;
+    public static void setCuentaActiva(Cuenta cuentaActiva) {
+        SesionUsuario.cuentaActiva = cuentaActiva;
+        SesionUsuario.reproductor = new Reproductor();
+    }
+
+    public static Reproductor getReproductor() {
+        return reproductor;
+    }
+
+    public static boolean hayCuentaActiva() {
+        return cuentaActiva != null;
+    }
+
+    public static void cerrarSesion() {
+        cuentaActiva = null;
+        reproductor = null;
     }
 }

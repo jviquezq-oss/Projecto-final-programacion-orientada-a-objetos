@@ -1,9 +1,10 @@
 package Entidades;
 
+import Excepciones.DatosInvalidosException;
 import java.time.LocalDate;
 
 public class Cancion {
-    private static int idCanciones;
+
     private int idCancion;
     private String nombre;
     private String genero;
@@ -12,11 +13,12 @@ public class Cancion {
     private LocalDate fechaLanzamiento;
     private String album;
     private String caratula;
-    private double calificacion;
+    private double sumaCalificaciones;
+    private int cantidadCalificaciones;
     private double precio;
+    private int duracion;
 
-    public Cancion(String nombre, String genero, String artista, String compositor, LocalDate fechaLanzamiento, String album, String caratula, double calificacion, double precio) {
-        this.idCancion = idCanciones++;
+    public Cancion(String nombre, String genero, String artista, String compositor, LocalDate fechaLanzamiento, String album, String caratula, double precio, int duracion) {
         this.nombre = nombre;
         this.genero = genero;
         this.artista = artista;
@@ -24,8 +26,24 @@ public class Cancion {
         this.fechaLanzamiento = fechaLanzamiento;
         this.album = album;
         this.caratula = caratula;
-        this.calificacion = calificacion;
+        this.sumaCalificaciones = 0.0;
+        this.cantidadCalificaciones = 0;
         this.precio = precio;
+        this.duracion = duracion;
+    }
+    public Cancion(int idCancion, String nombre, String genero, String artista, String compositor, LocalDate fechaLanzamiento, String album, String caratula, double sumaCalificaciones, int cantidadCalificaciones, double precio, int duracion) {
+        this.idCancion = idCancion;
+        this.nombre = nombre;
+        this.genero = genero;
+        this.artista = artista;
+        this.compositor = compositor;
+        this.fechaLanzamiento = fechaLanzamiento;
+        this.album = album;
+        this.caratula = caratula;
+        this.sumaCalificaciones = sumaCalificaciones;
+        this.cantidadCalificaciones = cantidadCalificaciones;
+        this.precio = precio;
+        this.duracion = duracion;
     }
 
     public int getIdCancion() {
@@ -92,23 +110,59 @@ public class Cancion {
         this.caratula = caratula;
     }
 
-    public double getCalificacion() {
-        return this.calificacion;
+    public double getSumaCalificaciones() {
+        return this.sumaCalificaciones;
     }
 
-    public void setCalificacion(double calificacion) {
-        this.calificacion = calificacion;
+    public int getCantidadCalificaciones() {
+        return this.cantidadCalificaciones;
+    }
+
+    public void agregarCalificacion(double calificacion) throws DatosInvalidosException {
+
+        if (calificacion < 0.0 || calificacion > 5.0) {
+            throw new DatosInvalidosException(
+                    "La calificación debe estar entre 0.0 y 5.0."
+            );
+        }
+        double valorMultiplicado = calificacion * 10.0;
+        if (Math.abs(valorMultiplicado - Math.rint(valorMultiplicado)) > 0.0000001) {
+            throw new DatosInvalidosException(
+                    "La calificación debe tener como máximo una posición decimal."
+            );
+        }
+        this.sumaCalificaciones += calificacion;
+        this.cantidadCalificaciones++;
+    }
+
+    public double getCalificacion() {
+        if (this.cantidadCalificaciones == 0) {
+            return 0.0;
+        }
+        double promedio = this.sumaCalificaciones / this.cantidadCalificaciones;
+        return Math.round(promedio * 10.0) / 10.0;
     }
 
     public double getPrecio() {
         return this.precio;
     }
-
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+    public int getDuracion() {return this.duracion;}
+    public void setDuracion(int duracion) {this.duracion = duracion;}
 
+    @Override
     public String toString() {
-        return "Cancion:idCancion:" + this.idCancion + ", nombre:" + this.nombre + "', genero:" + this.genero + "', artista:" + this.artista + "', compositor:" + this.compositor + "', fechaLanzamiento:" + this.fechaLanzamiento + ", album:" + this.album + "', caratula:" + this.caratula + "', calificacion:" + this.calificacion + ", precio:" + this.precio;
+        return "ID: " + idCancion +
+                "\nNombre: " + nombre +
+                "\nGénero: " + genero +
+                "\nArtista: " + artista +
+                "\nCompositor: " + compositor +
+                "\nFecha de lanzamiento: " + fechaLanzamiento +
+                "\nÁlbum: " + album +
+                "\nCarátula: " + caratula +
+                "\nPrecio: " + precio +
+                "\nDuración: " + duracion + " segundos";
     }
 }

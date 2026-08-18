@@ -1,88 +1,36 @@
 package LogicaNegocio;
 
 import Entidades.Administador;
+import Entidades.Cuenta;
 import Entidades.Usuario;
 import Excepciones.CredencialesInvalidasException;
-import Menus.MenuAdministrador;
-import Menus.MenuUsuario;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class Login {
-    public Login() {
+
+    private Login() {
     }
 
-    public static void iniciar() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static void iniciarSesion(String nombreUsuario, String contrasena) throws Exception {
+        Cuenta cuenta = GestorCuenta.buscarPorNombreUsuario(nombreUsuario);
 
-        while(true) {
-            System.out.println();
-            System.out.println("===== Reproductor de musica =====");
-            System.out.println("1. Iniciar Sesión");
-            System.out.println("2. Crear Usuario");
-            System.out.println("3. Iniciar sesion administrador");
-            System.out.println("4. Salir");
-            System.out.print("Seleccione una opción: ");
-            String opcionTexto = reader.readLine();
-
-            int opcion;
-            try {
-                opcion = Integer.parseInt(opcionTexto);
-            } catch (NumberFormatException var4) {
-                System.out.println("Debe ingresar un número válido.");
-                continue;
-            }
-
-            switch (opcion) {
-                case 1:
-                    iniciarSesion(reader);
-                    break;
-                case 2:
-                    System.out.print("\u001b[H\u001b[2J");
-                    System.out.flush();
-                    AdministradorUsuarios.solicitarUsuario();
-                    break;
-                case 3:
-                    iniciarSesionAdmin(reader);
-                    break;
-                case 4:
-                    return;
-                default:
-                    System.out.println("Seleccione una opción entre 1 y 4.");
-            }
+        if (cuenta == null || !cuenta.getContrasena().equals(contrasena)) {
+            throw new CredencialesInvalidasException("El nombre de usuario o la contraseña son incorrectos.");
         }
-    }
 
-    private static void iniciarSesion(BufferedReader reader) throws IOException {
-        System.out.println();
-        System.out.println("===== INICIO DE SESIÓN =====");
-        System.out.print("Nombre de usuario: ");
-        String username = reader.readLine();
-        System.out.print("Contraseña: ");
-        String password = reader.readLine();
-        try {
-            Usuario usuario = AdministradorUsuarios.autenticarUsuario(username, password);
-            System.out.println("Bienvenido " + usuario.getNombrCompleto());
-            MenuUsuario.mostrarMenu();
-        } catch (CredencialesInvalidasException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+        String tipoCuenta = GestorCuenta.obtenerTipoCuenta(cuenta.getIdCuenta());
 
-    private static void iniciarSesionAdmin(BufferedReader reader) throws IOException {
-        System.out.println();
-        System.out.println("===== INICIO DE SESIÓN =====");
-        System.out.print("Nombre de usuario: ");
-        String username = reader.readLine();
-        System.out.print("Contraseña: ");
-        String password = reader.readLine();
-        try {
-            Administador admin = AdministradorUsuarios.autenticarUsuarioAdmin(username, password);
-            System.out.println("Bienvenido Administrador.");
-            MenuAdministrador.mostrarMenuAdministrador();
-        } catch (CredencialesInvalidasException e) {
-            System.out.println(e.getMessage());
+        if ("Administrador".equals(tipoCuenta)) {
+            Administador administrador = GestorAdministrador.buscarPorId(cuenta.getIdCuenta());
+            SesionUsuario.setCuentaActiva(administrador);
+            return;
         }
+
+        if ("Usuario".equals(tipoCuenta)) {
+            Usuario usuario = GestorUsuario.buscarPorId(cuenta.getIdCuenta());
+            SesionUsuario.setCuentaActiva(usuario);
+            return;
+        }
+
+        throw new CredencialesInvalidasException("La cuenta no tiene un tipo válido.");
     }
 }
